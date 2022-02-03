@@ -8,8 +8,8 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "start": "cross-env NOE_ENV=prouction nest start",
-    "start:dev": "cross-env NOE_ENV=development nest start --watch",
+    "start": "cross-env NODE_ENV=prouction nest start",
+    "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main"
   },
@@ -17,8 +17,10 @@
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.1.6",
     "@nestjs/core": "^8.0.0",
+    "@nestjs/jwt": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
+    "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.3",
     "mssql": "^7.3.0",
     "reflect-metadata": "^0.1.13",

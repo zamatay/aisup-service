@@ -1,10 +1,11 @@
 const isolation = require('tedious').ISOLATION_LEVEL.READ_UNCOMMITTED;
+console.log(process.env);
 export const db = {
     type: 'mssql',
-    host: '192.168.0.12',
-    username: 'sa',
-    password: 'ggyyndk',
-    database: 'vkb_test1',
+    host: process.env.MSSQL_HOST,
+    username: process.env.MSSQL_LOGIN,
+    password: process.env.MSSQL_PASSWORD,
+    database: process.env.MSSQL_DB,
     options: {
         encrypt: false,
         enableArithAbort: true,
