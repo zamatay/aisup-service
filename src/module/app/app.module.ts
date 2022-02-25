@@ -5,6 +5,9 @@ import {DbModule} from "../db/db.module";
 import {ConfigModule} from "@nestjs/config";
 import {ApiModule} from "../api/api.module";
 import {AuthModule} from "../auth/auth.module";
+import { NotificationsModule } from "../notifications/notifications.module";
+import { SendMailModule } from "../send-mail/send-mail.module";
+import { SendRoistatModule } from "../send-roistat/send-roistat.module";
 
 @Module({
   imports: [
@@ -14,7 +17,10 @@ import {AuthModule} from "../auth/auth.module";
       }),
       ApiModule,
       DbModule,
+      NotificationsModule,
       AuthModule,
+      SendMailModule,
+      SendRoistatModule
   ],
   controllers: [AppController],
   providers: [AppService],

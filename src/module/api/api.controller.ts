@@ -1,19 +1,21 @@
 import {Controller, Get, UseGuards} from '@nestjs/common';
 import {ApiService} from "./api.service";
-import {JwtAuthGuard} from "../jwt-auth-guard";
+import {JwtAuthGuard} from "../../jwt-auth-guard";
+import { AppService } from "../app/app.service";
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
 export class ApiController {
 
     constructor(
-        readonly apiService: ApiService
+        readonly apiService: ApiService,
+        readonly appService: AppService
     ) {
     }
 
     @Get('version')
     version(){
-        return '1.0.0'
+        return this.appService.getVersion()
     }
 
 }

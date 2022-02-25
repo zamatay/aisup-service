@@ -16,8 +16,12 @@ export class BaseService {
         return this.manager.createQueryBuilder();
     }
 
-    returnOk(data){
+    returnOk(data = {}){
         return {statusCode: HttpStatus.OK, ...data}
+    }
+
+    returnBad(data = {}){
+        return {statusCode: HttpStatus.BAD_GATEWAY, ...data}
     }
 
 }

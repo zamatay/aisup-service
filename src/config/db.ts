@@ -1,5 +1,4 @@
 const isolation = require('tedious').ISOLATION_LEVEL.READ_UNCOMMITTED;
-console.log(process.env);
 export const db = {
     type: 'mssql',
     host: process.env.MSSQL_HOST,
