@@ -1,8 +1,6 @@
-import { Inject } from "@nestjs/common";
+import { HttpException, Inject, UnauthorizedException } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios"
 import { map } from "rxjs";
-//const axios = require("../http");
-const AuthException = require('./exception/AuthException')
 
 type MethodType = 'POST' | 'GET';
 
@@ -26,9 +24,9 @@ export class Api {
     }));
     if (data['error']) {
       if (data['error'] === 'authentication_failed') {
-        throw new AuthException(data['error']);
+        throw new UnauthorizedException(data['error']);
       }
-      throw new Error(data['error']);
+      throw new HttpException(data['error'], 500);
     }
     return data;
   }
