@@ -15,10 +15,9 @@ export class TelegramService extends BaseService{
     this.chat_id = process.env.TELEGRAM_CHAT_ID;
   }
 
-  public sendMessage(message: string): void{
+  public sendMessage = (message: string): any =>{
     const url = `https://api.telegram.org/${this.key}/sendmessage?chat_id=${this.chat_id}&text=${message}`
-    const observe = this.httpService.get(encodeURI(url));
-    observe.subscribe();
+    return this.httpService.get(encodeURI(url)).subscribe()
   };
 
 }
