@@ -55,11 +55,14 @@ export class AuthService extends BaseService{
     }
 
     async refreshToken(refreshToken: string){
+        if (!refreshToken){
+            throw new NotFoundException('refreshToken can`t is empty');
+        }
         // получаем пользователя из токена
         const user = this.jwtService.verify(refreshToken);
         // получаем из базы по токену и ид пользователя
         const item = await this.userService.getUserBy(
-          [{"u.id": user.id}, {"t.refreshToken": refreshToken}]
+          [{"u.id": user.id}]
           )
         // если не нашли то возвращаем not found
         if (!item){
@@ -82,7 +85,6 @@ export class AuthService extends BaseService{
     }
 
     private async getTokens(payload, password?: string): Promise<ITokenResult>{
-        console.log(payload, password);
         const refreshToken = await this.getRefreshToken(payload, password);
         return {token: this.getToken(payload), refreshToken};
     }

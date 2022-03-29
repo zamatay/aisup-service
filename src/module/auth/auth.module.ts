@@ -11,7 +11,7 @@ import { UserService } from "../../services/user.service";
         JwtModule.register({
         secret: process.env.SECRET ?? "SECRET",
         signOptions: {
-            expiresIn: "1h"
+            expiresIn: "15m"
         }})
     ],
     exports: [

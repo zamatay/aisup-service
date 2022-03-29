@@ -1,19 +1,18 @@
 import { HttpException, UnauthorizedException } from "@nestjs/common";
 import { METHOD_GET } from "./roistat-interface";
 import { firstValueFrom } from "rxjs";
+import { AxiosResponse} from '@nestjs/axios/node_modules/axios'
 
 export class Api {
   API_URL = 'https://cloud.roistat.com/api/v1/';
 
-  //private httpClient: HttpService = new HttpService();
-
-  constructor(protected _api_key: string, protected _project_id: string, protected sendFunction) {
-  }
+  constructor(protected _api_key: string, protected _project_id: string, protected sendFunction) {}
 
   send = async (apiMethod, post = {}) => {
     const method = apiMethod.type ?? METHOD_GET;
     const url = this.buildUrl(apiMethod);
-    const response = await firstValueFrom<any>(this.sendFunction(method, url, post));
+    const response = await firstValueFrom<AxiosResponse>(this.sendFunction(method, url, post));
+    //console.log(response.headers);
     const data = response.data;
     if (data["error"]) {
       if (data["error"] === "authentication_failed") {
