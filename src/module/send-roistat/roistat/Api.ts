@@ -1,7 +1,7 @@
 import { HttpException, UnauthorizedException } from "@nestjs/common";
 import { METHOD_GET } from "./roistat-interface";
 import { firstValueFrom } from "rxjs";
-import { AxiosResponse} from '@nestjs/axios/node_modules/axios'
+import { AxiosResponse} from 'axios'
 
 export class Api {
   API_URL = 'https://cloud.roistat.com/api/v1/';
