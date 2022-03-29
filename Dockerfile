@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install
 RUN npm install -g
-
+RUN nest build
 
 COPY . .
 
@@ -14,6 +14,6 @@ ARG DOCKER_ENV
 ENV NODE_ENV=${DOCKER_ENV}
 
 ENV TZ="Europe/Moscow"
-CMD ["npm", "run", "production"]
+CMD ["npm", "run", "start:production"]
 
 
