@@ -14,6 +14,6 @@ ARG DOCKER_ENV
 ENV NODE_ENV=${DOCKER_ENV}
 
 ENV TZ="Europe/Moscow"
-CMD ["npm", "run", "build"]
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "producton"]
+
 
