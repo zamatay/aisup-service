@@ -42,4 +42,12 @@ export class BaseService {
         }
     }
 
+  async saveResponse(request, response): Promise<void>{
+    await this.manager.createQueryBuilder()
+      .insert()
+      .into('s_post_log', ['request', 'response', 'date'])
+      .values({request: JSON.stringify(request), response: JSON.stringify(response), date:()=>"GetDate()"})
+      .execute()
+  }
+
 }
