@@ -1,6 +1,5 @@
-import { Module } from '@nestjs/common';
-import { SendMailService } from './send-mail.service';
-import { ConfigModule } from "@nestjs/config";
+import { Module } from "@nestjs/common";
+import { SendMailService } from "./send-mail.service";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { TelegramService } from "../../services/telegram.service";
 import { HttpModule } from "@nestjs/axios";
@@ -19,6 +18,9 @@ import { HttpModule } from "@nestjs/axios";
           user: process.env.MAIL_USERNAME,
           pass: process.env.MAIL_PASSWORD,
         },
+        pool: true,
+        maxConnections: +process.env.MAIL_MAX_CONNECT,
+        maxMessages: +process.env.MAIL_MAX_MESSAGE,
       },
       defaults: {
         from: '"No Reply" <aisup@v-k-b.ru>',
