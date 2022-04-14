@@ -8,8 +8,7 @@ import { ApiOperation, ApiTags } from "@nestjs/swagger";
 @Controller('api/auth')
 export class AuthController {
 
-    constructor(private authService: AuthService) {
-    }
+    constructor(private authService: AuthService) {}
 
     @ApiOperation({summary: "Процедура регистрации"})
     @Post('register')

@@ -1,5 +1,7 @@
+-- собираем образ
 docker build --build-arg DOCKER_ENV=development -t vkbn .
 docker build --build-arg DOCKER_ENV=production -t vkbn .
+-- запускаем контейнер из образа
 docker run --network host --restart=always --name=vkbn vkbn
 -- как демон
 docker run -d --network host --restart=always vkbn name vkbn
