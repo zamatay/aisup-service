@@ -4,9 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install -g
-RUN npm install -g npm@8.12.2
 RUN npm install
+RUN npm install -g
 
 COPY . .
 
