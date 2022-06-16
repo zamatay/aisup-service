@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
-import { ImportService } from './import.service';
+import { Body, Controller, Post, UseGuards } from "@nestjs/common";
+import { ImportService } from "./import.service";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "../../jwt-auth-guard";
+import { JwtAuthGuard } from "../../guards/jwt-auth-guard";
 import { ImportDataDto, ImportResulDataDto } from "./dto/import-data-dto";
 
 @ApiTags('Функции импорта')

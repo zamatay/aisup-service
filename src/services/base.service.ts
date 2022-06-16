@@ -12,6 +12,13 @@ export class BaseService {
 
     }
 
+    async query<T = any[]>(query: string, parameters: object = {}): Promise<T> {
+        // example const res = await this.query("exec ImportRPFrom1C :data", {data: JSON.stringify(body)});
+        const connection = this.manager.connection;
+        const [ escapedQuery, escapedParams ] = connection.driver.escapeQueryWithParameters(query, parameters, {});
+        return connection.query(escapedQuery, escapedParams);
+    }
+
     queryBuilder(){
         return this.manager.createQueryBuilder();
     }
@@ -24,9 +31,9 @@ export class BaseService {
         return {statusCode: HttpStatus.BAD_GATEWAY, ...data}
     }
 
-    async addToLog(method: string, data: object): Promise<void>{
+    addToLog(method: string, data: object): void{
         try {
-            await this.manager.createQueryBuilder()
+            this.manager.createQueryBuilder()
               .insert()
               .into("_RequestHistory", ["Creator", "DateCreate", "Date", "post", "method"])
               .values([{
@@ -36,7 +43,9 @@ export class BaseService {
                   post: JSON.stringify(data),
                   method
               }])
-              .execute();
+              .execute()
+                .then()
+                .catch();
         } catch (e) {
             //this.telegramService.sendMessage(e)
         }

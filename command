@@ -13,6 +13,10 @@ docker ps -q | xargs  docker stats --no-stream
 docker system prune -a
 --Удаление всех остановленных контейнеров
 docker container prune
+--Удалить контейнер по имени
+docker rm vkbn
+--Удалить образ по имени
+docker rmi vkbn
 
 Expires on Wed, Feb 1 2023.
 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

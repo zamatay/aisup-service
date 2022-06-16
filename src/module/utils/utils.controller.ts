@@ -1,8 +1,8 @@
-import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
-import { UtilsService } from './utils.service';
+import { Controller, Get, Query, UseGuards } from "@nestjs/common";
+import { UtilsService } from "./utils.service";
 import { FirmDto } from "../../dto/firm-dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "../../jwt-auth-guard";
+import { JwtAuthGuard } from "../../guards/jwt-auth-guard";
 
 @ApiTags('Общие функции')
 @UseGuards(JwtAuthGuard)

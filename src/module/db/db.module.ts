@@ -25,6 +25,7 @@ const isolation = require('tedious').ISOLATION_LEVEL.READ_UNCOMMITTED;
                 max: 20
             },
             autoLoadEntities: true,
+            requestTimeout: 60000,
         }),
     ],
 })

@@ -1,10 +1,15 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./module/app/app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { WsAdapter } from "@nestjs/platform-ws";
+import { json } from "express";
 
 async function bootstrap() {
   const PORT = process.env.PORT ?? 3000;
   const app = await NestFactory.create(AppModule);
+  app.useWebSocketAdapter(new WsAdapter(app));
+  app.enableCors();
+  app.use(json({limit: '50mb'}));
 
   const configSwagger = new DocumentBuilder()
     .setTitle('Api компаний ВКБ')

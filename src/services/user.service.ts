@@ -9,6 +9,11 @@ export class UserService extends BaseService{
   }
 
   public async getUserByLogin(login: string, select: string[] = ['u.id', 'u.login', 'u.isAdmin', 'u.staff_id', 'u.password']) {
+    // console.log(this.queryBuilder()
+    //     .select(select)
+    //     .from("_users", "u")
+    //     .where("u.del = 0 and u.IsLocked = 0 and u.login = :login", { login })
+    //     .getQueryAndParameters());
     return await this.queryBuilder()
       .select(select)
       .from('_users', 'u')

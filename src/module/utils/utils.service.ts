@@ -1,8 +1,6 @@
-import { Injectable, UseGuards } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { BaseService } from "../../services/base.service";
 import { FirmDto } from "../../dto/firm-dto";
-import { JwtAuthGuard } from "../../jwt-auth-guard";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Injectable()
 export class UtilsService extends BaseService{

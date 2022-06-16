@@ -21,11 +21,25 @@ export class AuthService extends BaseService{
         super(props);
     }
 
+    setUserForSocket(socket: any, authHeader: string){
+        if (!authHeader){
+            socket.close(401)
+            return;
+        }
+        const [bearer, token] = authHeader.split(' ');
+        if (bearer !== 'Bearer' || !token){
+            socket.close(401);
+            return;
+        }
+        socket.user = this.jwtService.verify(token);
+    }
+
     async login(user: UserLoginDto){
         const item = await this.userService.getUserByLogin(user.name)
         if (!item){
             throw new NotFoundException();
         }
+        console.log(item, user);
         if (await AuthService.validateUser(item, user)){
             const {password, ...data} = item
             const tokens = await this.getTokens(data);
@@ -102,6 +116,7 @@ export class AuthService extends BaseService{
     }
 
     private static async validateUser(item: any, user: UserLoginDto): Promise<boolean> {
+        console.log(user.password, item.password, await bcrypt.compare(user.password, item.password));
         return (item.password) && await bcrypt.compare(user.password, item.password);
     }
 }
