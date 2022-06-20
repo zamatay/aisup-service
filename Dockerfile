@@ -1,16 +1,28 @@
 FROM node:16.13.2-alpine as builder
+ARG DOCKER_ENV
+ENV NODE_ENV build
+
+WORKDIR /home/node
+
+COPY package*.json ./
+RUN npm ci
+
+COPY --chown=node:node . .
+
+RUN npm run build \
+    && npm prune --production
+
+FROM node:16.13.2-alpine
 
 ARG DOCKER_ENV
 ENV NODE_ENV=${DOCKER_ENV}
-WORKDIR /app
-
 ENV TZ="Europe/Moscow"
 
-COPY ./.production.env ./.production.env
-COPY ./package.json ./package.json
-COPY ./package-lock.json ./package-lock.json
-COPY ./dist ./dist
-COPY ./node_modules ./node_modules
+WORKDIR /home/node
 
-CMD ["npm", "run", "start:prod"]
+COPY --from=builder --chown=node:node /home/node/.production.env ./
+COPY --from=builder --chown=node:node /home/node/package*.json ./
+COPY --from=builder --chown=node:node /home/node/node_modules/ ./node_modules/
+COPY --from=builder --chown=node:node /home/node/dist/ ./dist/
 
+CMD ["node", "dist/server.js"]
