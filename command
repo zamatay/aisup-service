@@ -4,7 +4,8 @@ docker build --build-arg DOCKER_ENV=production -t vkbn .
 -- запускаем контейнер из образа
 docker run --network host --restart=always --name=vkbn vkbn
 -- как демон
-docker run -d --network host --restart=always vkbn name vkbn
+docker run --network host --restart=always vkbn name vkbn
+docker run -d --network host --restart=always --name=vkbn vkbn
 
 -- статистика по работе контейнера
 docker ps -q | xargs  docker stats --no-stream
