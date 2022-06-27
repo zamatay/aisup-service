@@ -91,28 +91,8 @@ export class DataNotifyService extends BaseService{
         }
     }
 
-    // загружаем уведомления по дате установленной в lastDate
-    async loadNotify(isAll: boolean = false): Promise<void> {
+    fillNotifyByRequest(rawItems: any[]) {
         const items = [];
-        const rawItems = await this.manager.query(`
-        DECLARE @lastDateTime DateTime = case when @0 = 1 then dateadd(m, -1, getDate()) else dateadd(s, -${this.periodSecond}, GETDATE()) end;
-        with all_date as (
-          select id, Date from _Notifycations where Date >= @lastDateTime
-            union
-          select Notification_id, Date from _NotifycationReaders where Date >= @lastDateTime
-            union
-          select Notification_id, Date from _NotifycationRecipients where Date >= @lastDateTime
-        ),
-        maxDate as (select id Notification_id, max(Date) dateedit from all_date group by id)
-        SELECT n.id, n.text, n.object_id, n.isAll, stuff(r.staff_ids, 1, 1, '') readers, stuff(nr.Staff_ids, 1, 1, '') recipients, n.ids, getDate() currentDate, nt.color, n.date
-        FROM _Notifycations n
-           outer apply (select ',' + cast(staff_id as varchar) from _NotifycationRecipients nr where nr.Notification_id = n.id order by staff_id for xml path('')) nr(staff_ids)
-           outer apply (select ',' + cast(staff_id as varchar) from _NotifycationReaders r where r.Notification_id = n.id order by staff_id for xml path('')) r(staff_ids)
-        LEFT JOIN _NotifycationType nt ON nt.id = n.NotifycationType_id
-           JOIN maxDate md on md.Notification_id = n.id and md.DateEdit >= @lastDateTime
-        where (nr.staff_ids is not null or n.isAll = 1)
-        order by 1,5,6
-    `, [isAll]);
         for (const item of rawItems){
             // если все прочитали то пропускаем
             if (item.recipients === item.readers && !item.isAll){
@@ -127,8 +107,37 @@ export class DataNotifyService extends BaseService{
 
             this.fillUserSet(item);
         }
-        if (!isAll){
-            notifyEvent.emit('loadNotify', items)
+        return items;
+    }
+
+    // загружаем уведомления по дате установленной в lastDate
+    async loadNotify(isAll: boolean = false): Promise<void> {
+        try {
+            const rawItems = await this.manager.query(`
+                DECLARE @lastDateTime DateTime = case when @0 = 1 then dateadd(m, -1, getDate()) else dateadd(s, -${this.periodSecond}, GETDATE()) end;
+                with all_date as (
+                  select id, Date from _Notifycations where Date >= @lastDateTime
+                    union
+                  select Notification_id, Date from _NotifycationReaders where Date >= @lastDateTime
+                    union
+                  select Notification_id, Date from _NotifycationRecipients where Date >= @lastDateTime
+                ),
+                maxDate as (select id Notification_id, max(Date) dateedit from all_date group by id)
+                SELECT n.id, n.text, n.object_id, n.isAll, stuff(r.staff_ids, 1, 1, '') readers, stuff(nr.Staff_ids, 1, 1, '') recipients, n.ids, getDate() currentDate, nt.color, n.date
+                FROM _Notifycations n
+                   outer apply (select ',' + cast(staff_id as varchar) from _NotifycationRecipients nr where nr.Notification_id = n.id order by staff_id for xml path('')) nr(staff_ids)
+                   outer apply (select ',' + cast(staff_id as varchar) from _NotifycationReaders r where r.Notification_id = n.id order by staff_id for xml path('')) r(staff_ids)
+                LEFT JOIN _NotifycationType nt ON nt.id = n.NotifycationType_id
+                   JOIN maxDate md on md.Notification_id = n.id and md.DateEdit >= @lastDateTime
+                where (nr.staff_ids is not null or n.isAll = 1)
+                order by 1,5,6
+            `, [isAll]);
+            const items = this.fillNotifyByRequest(rawItems);
+            if (!isAll){
+                notifyEvent.emit('loadNotify', items)
+            }
+        } catch (e){
+            console.log(e);
         }
     }
 

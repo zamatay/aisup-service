@@ -39,7 +39,6 @@ export class AuthService extends BaseService{
         if (!item){
             throw new NotFoundException();
         }
-        console.log(item, user);
         if (await AuthService.validateUser(item, user)){
             const {password, ...data} = item
             const tokens = await this.getTokens(data);

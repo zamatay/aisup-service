@@ -91,14 +91,13 @@ export class NotifyGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.authService.setUserForSocket(client, authHeader);
         const notifyties = await this.notifyService.getNotifications(client.user);
         if (notifyties) {
-            console.log(notifyties);
             client.send(JSON.stringify({ event: NotifyNames.newNotify, data: notifyties }))
         }
-        console.log(`connection ${client.user.login}`);
+        //console.log(`connection ${client.user.login}`);
     }
 
     handleDisconnect(client: AuthSocket): any {
-        console.log(`disconnect ${client.user.login}`);
+        //console.log(`disconnect ${client.user.login}`);
     }
 
 }

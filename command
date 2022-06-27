@@ -1,10 +1,13 @@
 -- собираем образ
 docker build --build-arg DOCKER_ENV=development -t vkbn .
 docker build --build-arg DOCKER_ENV=production -t vkbn .
--- запускаем контейнер из образа
+
+-- создать контейнер из образа vkbn под названиеим vkbn_new
+docker create --network host --restart=always --name=vkbn_new vkbn
+
+-- создать и запустить контейнер из образа
 docker run --network host --restart=always --name=vkbn vkbn
 -- как демон
-docker run --network host --restart=always vkbn name vkbn
 docker run -d --network host --restart=always --name=vkbn vkbn
 
 -- статистика по работе контейнера
