@@ -28,7 +28,6 @@
     "@nestjs/typeorm": "^8.1.4",
     "@nestjs/websockets": "^8.4.5",
     "@types/cron": "^1.7.3",
-    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.3",
     "mssql": "^7.3.5",

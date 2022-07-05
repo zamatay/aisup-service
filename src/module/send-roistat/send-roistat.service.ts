@@ -7,7 +7,7 @@ import { Cron } from "@nestjs/schedule";
 import { RoistatNewDto, RoistatOldDto } from "./roistat/dto/roistat-dto";
 import { HttpService } from "@nestjs/axios";
 import { METHOD_POST } from "./roistat/roistat-interface";
-import { Method } from "axios";
+import { Method } from "axios/lib/axios";
 
 interface IRawDataItem {
   clientStatus_id: number,

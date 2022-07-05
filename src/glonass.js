@@ -1,9 +1,9 @@
 // подключаем необходимые модули
-const fileName = (process.env.NODE_ENV) ? `../.${process.env.NODE_ENV}.env` : '.env';
+const fileName = (process.env.NODE_ENV) ? `../.${process.env.NODE_ENV}.env` : '../.env';
 const fs = require('fs').promises;
 const path = require('path');
-require('dotenv').config({path: fileName});
-const axios = require('axios');
+const a = require('dotenv').config({path: fileName});
+const axios = require('axios/lib/axios');
 const typeorm = require("typeorm");
 
 // создаем экземпляр для работы с запросами к сервису
