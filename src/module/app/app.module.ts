@@ -10,6 +10,7 @@ import { SendMailModule } from "../send-mail/send-mail.module";
 import { SendRoistatModule } from "../send-roistat/send-roistat.module";
 import { UtilsModule } from "../utils/utils.module";
 import { ImportModule } from "../import/import.module";
+import { GlonassModule } from "../glonass/glonass.module";
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { ImportModule } from "../import/import.module";
     SendMailModule,
     SendRoistatModule,
     UtilsModule,
-    ImportModule
+    ImportModule,
+    GlonassModule
   ],
   controllers: [AppController],
   providers: [AppService],

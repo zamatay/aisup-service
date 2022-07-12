@@ -3,8 +3,8 @@ const path = require('path');
 const axios = require('axios/lib/axios');
 const typeorm = require("typeorm");
 
+const fileName = path.resolve(__dirname, '..', (process.env.NODE_ENV) ? `.${process.env.NODE_ENV}.env` : '.env');
 //Подключаем файл конфигурации
-const fileName = (process.env.NODE_ENV) ? `../.${process.env.NODE_ENV}.env` : '../.env';
 require('dotenv').config({path: fileName});
 
 // создаем экземпляр для работы с запросами к сервису
