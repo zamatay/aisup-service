@@ -28,7 +28,7 @@ export class ImportDataDto extends ImportDataBaseDto{
 
   @ApiProperty({
     type: 'boolean',
-    description: "пытаться найти аналитики платжа по шаблону или предыдущим оплатам",
+    description: "пытаться найти аналитики платежа по шаблону или предыдущим оплатам",
     example: "0"
   })
   public WithAnal: string

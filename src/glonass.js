@@ -2,6 +2,7 @@
 const path = require('path');
 const axios = require('axios/lib/axios');
 const typeorm = require("typeorm");
+const fs = require('fs');
 
 const fileName = path.resolve(__dirname, '..', (process.env.NODE_ENV) ? `.${process.env.NODE_ENV}.env` : '.env');
 //Подключаем файл конфигурации
@@ -57,6 +58,15 @@ const sendMessage = async (message)=>{
   http.get(url);
 }
 
+const saveToFile = (allData)=>{
+  const file = path.join(__dirname, "objectData.log");
+  fs.writeFile(file, JSON.stringify(allData), err => {
+    if (err) {
+      console.error(err);
+    }
+  });
+}
+
 const start = async () => {
   try { // логинимся
     const data = await http.get("http://vkb.glonass.io/api/integration/v1/connect?login=%D0%92%D0%9A%D0%91&password=%D0%A2%D1%83%D0%BB%D0%B03&lang=ru-ru&timezone=0");
@@ -84,7 +94,8 @@ const start = async () => {
         // собираем в объект
         objectData.forEach(item => allData.push(item.data));
       }
-      const file = path.join(__dirname, "objectData.log");
+
+      saveToFile(allData);
       await query("exec m_ImportGlonasTransportDetail :data", { data: JSON.stringify(allData) });
       sendMessage("Выгрузка Глонас завершена");
     }

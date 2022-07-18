@@ -10,10 +10,10 @@ import { api } from "./api";
 @Injectable()
 export class GlonassService extends BaseService{
     private _CHUNK_DATA: number = 150;
-    private headersRequest: AxiosRequestConfig;
 
     constructor(props, private readonly httpClient: HttpService, private readonly telegramService: TelegramService) {
         super(props);
+        //this.handleCron();
     }
 
     getPromise(id): Promise<AxiosResponse> {
@@ -30,6 +30,19 @@ export class GlonassService extends BaseService{
 
     getHeaderRequest(): AxiosRequestConfig{
         return {headers: {COOKIE: `SGUID=session_id=${api.sessionID}`}};
+    }
+
+    saveToFile(allData){
+        const path = require('path')
+        const fs = require("fs");
+
+        const fileName = path.join(__dirname, "objectData.log");
+        console.log(fileName);
+        fs.writeFile(fileName, JSON.stringify(allData), err => {
+            if (err) {
+                console.error(err);
+            }
+        });
     }
 
     @Cron(`0 7 * * *`, {name: 'glonass'})
@@ -58,6 +71,7 @@ export class GlonassService extends BaseService{
                     // собираем в объект
                     objectData.forEach(item => allData.push(item.data));
                 }
+                this.saveToFile(allData);
                 await this.query("exec m_ImportGlonasTransportDetail :data", { data: JSON.stringify(allData) });
                 this.telegramService.sendMessage("Выгрузка Глонас завершена");
             }
