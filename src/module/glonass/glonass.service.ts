@@ -37,7 +37,7 @@ export class GlonassService extends BaseService{
         const fs = require("fs");
 
         const fileName = path.join(__dirname, "objectData.log");
-        console.log(fileName);
+        //console.log(fileName);
         fs.writeFile(fileName, JSON.stringify(allData), err => {
             if (err) {
                 console.error(err);
@@ -45,7 +45,7 @@ export class GlonassService extends BaseService{
         });
     }
 
-    @Cron(`0 7 * * *`, {name: 'glonass'})
+    @Cron(`0 23 * * *`, {name: 'glonass'})
     async handleCron(): Promise<void>{
         try { // логинимся
             const data = await firstValueFrom(this.httpClient.get(api.login()));
