@@ -4,8 +4,8 @@ import { BaseService } from "./base.service";
 
 @Injectable()
 export class TelegramService extends BaseService{
-  private key: string;
-  private chat_id: string;
+  private readonly key: string;
+  private readonly chat_id: string;
 
 
   constructor(props,

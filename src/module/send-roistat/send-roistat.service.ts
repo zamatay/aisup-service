@@ -62,9 +62,8 @@ export class SendRoistatService extends BaseService{
 
   async getData(): Promise<IRawDataItem[]>{
     try {
-      console.log(await this.getLastDate());
-      return await this.manager.query(`
-                        declare @date DATETIME = @0;
+      return await this.query(`
+                        declare @date DATETIME = :date;
                         select  
                             pc.clientStatus_id,
                             roistat_id,
@@ -87,7 +86,7 @@ export class SendRoistatService extends BaseService{
                           and (DateStatusChange >= @date or rhd_last.DateCreate >= @date)
                           and rhd_last.roistat_id is not null
                           and pc.ClientStatus_id is not null`
-        , [await this.getLastDate()]
+        , { date: await this.getLastDate() }
       );
     } catch (e) {
       await this.telegramService.sendMessage(e.message);
