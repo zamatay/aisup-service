@@ -47,18 +47,25 @@ export class SendRoistatService extends BaseService{
   }
 
   async setLastDate(date): Promise<void>{
-    await this.queryBuilder()
+    let data = await this.queryBuilder()
       .update('_GlobalOptions')
       .set({dt: date})
       .where('guid = :guid', {guid: this.guid})
       .execute()
+    if (data.affected === 0){
+      await this.queryBuilder().insert()
+          .into('_GlobalOptions', ['guid', 'dt'])
+          .values({guid: this.guid, dt: date})
+          .execute()
+    }
   }
 
   async getData(): Promise<IRawDataItem[]>{
     try {
+      console.log(await this.getLastDate());
       return await this.manager.query(`
                         declare @date DATETIME = @0;
-                        select 
+                        select  
                             pc.clientStatus_id,
                             roistat_id,
                             format(rhd_last.DateCreate, 'dd-MM-yyyy HH:mm') date_Last,
@@ -90,7 +97,6 @@ export class SendRoistatService extends BaseService{
 
   @Cron(`*/${roistat.INTERVAL} * 5-23 * * *`, {name: 'roistat'})
   async handleCron(): Promise<void>{
-    return
     try {
       const date = new Date();
       const rawData = await this.getData();
