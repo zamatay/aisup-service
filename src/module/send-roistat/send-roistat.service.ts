@@ -90,6 +90,7 @@ export class SendRoistatService extends BaseService{
 
   @Cron(`*/${roistat.INTERVAL} * 5-23 * * *`, {name: 'roistat'})
   async handleCron(): Promise<void>{
+    return
     try {
       const date = new Date();
       const rawData = await this.getData();
