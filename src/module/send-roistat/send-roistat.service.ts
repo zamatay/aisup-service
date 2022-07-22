@@ -32,7 +32,7 @@ export class SendRoistatService extends BaseService{
       maxBodyLength: Infinity,
       maxContentLength: Infinity
     }
-    return (method === METHOD_POST) ? this.httpClient.post(url, postData, ) : this.httpClient.get(url);
+    return (method === METHOD_POST) ? this.httpClient.post(url, postData, requestConfig) : this.httpClient.get(url, requestConfig);
   }
 
   constructor(props, protected telegramService: TelegramService,public readonly httpClient: HttpService) {
