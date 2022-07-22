@@ -8,6 +8,7 @@ import { RoistatNewDto, RoistatOldDto } from "./roistat/dto/roistat-dto";
 import { HttpService } from "@nestjs/axios";
 import { METHOD_POST } from "./roistat/roistat-interface";
 import { Method } from "axios/lib/axios";
+import { AxiosRequestConfig } from "axios";
 
 interface IRawDataItem {
   clientStatus_id: number,
@@ -27,7 +28,11 @@ export class SendRoistatService extends BaseService{
   private project_new_data: Roistat;
 
   sendFunction = (method: Method, url: string, postData: object) => {
-    return (method === METHOD_POST) ? this.httpClient.post(url, postData) : this.httpClient.get(url);
+    const requestConfig: AxiosRequestConfig = {
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity
+    }
+    return (method === METHOD_POST) ? this.httpClient.post(url, postData, ) : this.httpClient.get(url);
   }
 
   constructor(props, protected telegramService: TelegramService,public readonly httpClient: HttpService) {
