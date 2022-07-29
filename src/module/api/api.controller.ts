@@ -2,7 +2,7 @@ import { Controller, Get, Query, UseGuards } from "@nestjs/common";
 import {ApiService} from "./api.service";
 import {JwtAuthGuard} from "../../guards/jwt-auth-guard";
 import { AppService } from "../app/app.service";
-import { ApiOperation } from "@nestjs/swagger";
+import { ApiOperation, ApiParam } from "@nestjs/swagger";
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -19,7 +19,8 @@ export class ApiController {
         return this.appService.getVersion()
     }
 
-    @ApiOperation({summary: "Процедура получения данных из таблицы", parameters: [{name: 'tableName', in: 'query' }]})
+    @ApiOperation({summary: "Процедура получения данных из таблицы"})
+    @ApiParam({ name: "tableName", required: true, description: "Название таблицы в системе" })
     @Get('getData')
     getData(@Query() query){
         const {tableName, ...filter} = query
