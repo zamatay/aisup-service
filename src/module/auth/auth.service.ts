@@ -118,4 +118,20 @@ export class AuthService extends BaseService{
         // console.log(user.password, item.password, await bcrypt.compare(user.password, item.password));
         return (item.password) && await bcrypt.compare(user.password, item.password);
     }
+
+
+    async tokenService(){
+        const item = await this.userService.getUserBy(
+            [{"u.id": 4837}]
+        )
+        // если не нашли то возвращаем not found
+        if (!item){
+            throw new NotFoundException();
+        }
+        const {refreshToken: token, ...data} = item;
+        // генерим токены
+        return this.jwtService.sign(data, {expiresIn: '1y'});
+        //
+        // return this.returnOk({token: this.getToken(data)})
+    }
 }

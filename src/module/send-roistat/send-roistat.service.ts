@@ -11,58 +11,62 @@ import { Method } from "axios/lib/axios";
 import { AxiosRequestConfig } from "axios";
 
 interface IRawDataItem {
-  clientStatus_id: number,
-  roistat_id: string,
-  date_Last: Date,
-  client_id: number,
-  date_create: Date,
-  name: string,
-  id: number,
-  date: Date
+    clientStatus_id: number,
+    roistat_id: string,
+    date_Last: Date,
+    client_id: number,
+    date_create: Date,
+    name: string,
+    id: number,
+    date: Date
 }
 
 @Injectable()
-export class SendRoistatService extends BaseService{
-  private guid: string = '1DAF8E06-0ACF-43EF-BA33-5F71F961A788';
-  private project_old_data: Roistat;
-  private project_new_data: Roistat;
+export class SendRoistatService extends BaseService {
+    private guid: string = "1DAF8E06-0ACF-43EF-BA33-5F71F961A788";
+    private project_old_data: Roistat;
+    private project_new_data: Roistat;
 
-  sendFunction = (method: Method, url: string, postData: object) => {
-    const requestConfig: AxiosRequestConfig = {
-      maxBodyLength: Infinity,
-      maxContentLength: Infinity
+    sendFunction = (method: Method, url: string, postData: object) => {
+        const requestConfig: AxiosRequestConfig = {
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity
+        };
+        try {
+            return (method === METHOD_POST) ? this.httpClient.post(url, postData, requestConfig) : this.httpClient.get(url, requestConfig);
+        } catch (e) {
+            this.telegramService.sendMessage(`Error on sendFunction roistat\r\n${e.message}`);
+        }
+    };
+
+    constructor(props, protected telegramService: TelegramService, public readonly httpClient: HttpService) {
+        super(props);
+        this.project_old_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID_OLD, this.sendFunction);
+        this.project_new_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID, this.sendFunction);
     }
-    return (method === METHOD_POST) ? this.httpClient.post(url, postData, requestConfig) : this.httpClient.get(url, requestConfig);
-  }
 
-  constructor(props, protected telegramService: TelegramService,public readonly httpClient: HttpService) {
-    super(props);
-    this.project_old_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID_OLD, this.sendFunction);
-    this.project_new_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID, this.sendFunction);
-  }
-
-  async getLastDate(): Promise<Date>{
-    const rawDate = await this.queryBuilder().from('_GlobalOptions', 'go').where('guid=:guid', {guid: this.guid}).getRawOne();
-    return (rawDate && rawDate.dt) ? new Date(rawDate.dt) : new Date(0);
-  }
-
-  async setLastDate(date): Promise<void>{
-    let data = await this.queryBuilder()
-      .update('_GlobalOptions')
-      .set({dt: date})
-      .where('guid = :guid', {guid: this.guid})
-      .execute()
-    if (data.affected === 0){
-      await this.queryBuilder().insert()
-          .into('_GlobalOptions', ['guid', 'dt'])
-          .values({guid: this.guid, dt: date})
-          .execute()
+    async getLastDate(): Promise<Date> {
+        const rawDate = await this.queryBuilder().from("_GlobalOptions", "go").where("guid=:guid", { guid: this.guid }).getRawOne();
+        return (rawDate && rawDate.dt) ? new Date(rawDate.dt) : new Date(0);
     }
-  }
 
-  async getData(): Promise<IRawDataItem[]>{
-    try {
-      return await this.query(`
+    async setLastDate(date): Promise<void> {
+        let data = await this.queryBuilder()
+            .update("_GlobalOptions")
+            .set({ dt: date })
+            .where("guid = :guid", { guid: this.guid })
+            .execute();
+        if (data.affected === 0) {
+            await this.queryBuilder().insert()
+                .into("_GlobalOptions", ["guid", "dt"])
+                .values({ guid: this.guid, dt: date })
+                .execute();
+        }
+    }
+
+    async getData(): Promise<IRawDataItem[]> {
+        try {
+            return await this.query(`
                         declare @date DATETIME = :date;
                         select  
                             pc.clientStatus_id,
@@ -86,35 +90,35 @@ export class SendRoistatService extends BaseService{
                           and (DateStatusChange >= @date or rhd_last.DateCreate >= @date)
                           and rhd_last.roistat_id is not null
                           and pc.ClientStatus_id is not null`
-        , { date: await this.getLastDate() }
-      );
-    } catch (e) {
-      await this.telegramService.sendMessage(e.message);
-      return [];
+                , { date: await this.getLastDate() }
+            );
+        } catch (e) {
+            this.telegramService.sendMessage(`Error on getData roistat\r\n${e.message}`);
+            return [];
+        }
     }
-  }
 
-  @Cron(`*/${roistat.INTERVAL} * 5-23 * * *`, {name: 'roistat'})
-  async handleCron(): Promise<void>{
-    try {
-      const date = new Date();
-      const rawData = await this.getData();
-      if (rawData.length) {
-        let response, data;
+    @Cron(`*/${roistat.INTERVAL} * 5-23 * * *`, { name: "roistat" })
+    async handleCron(): Promise<void> {
+        try {
+            const date = new Date();
+            const rawData = await this.getData();
+            if (rawData.length) {
+                let response, data;
 
-        data = RoistatOldDto.getItems(rawData);
-        response = await this.project_old_data.api().send(Methods.ADD_ORDERS, data);
-        await this.saveResponse(data, response);
+                data = RoistatOldDto.getItems(rawData);
+                response = await this.project_old_data.api().send(Methods.ADD_ORDERS, data);
+                await this.saveResponse(data, response);
 
-        data = RoistatNewDto.getItems(rawData);
-        response = await this.project_new_data.api().send(Methods.ADD_ORDERS, data);
-        await this.saveResponse(data, response);
+                data = RoistatNewDto.getItems(rawData);
+                response = await this.project_new_data.api().send(Methods.ADD_ORDERS, data);
+                await this.saveResponse(data, response);
 
-      }
-      await this.setLastDate(date);
-    } catch (e) {
-      await this.telegramService.sendMessage(e.message)
+            }
+            await this.setLastDate(date);
+        } catch (e) {
+            this.telegramService.sendMessage(`Error on Cron roistat\r\n${e.message}`);
+        }
     }
-  }
 
 }

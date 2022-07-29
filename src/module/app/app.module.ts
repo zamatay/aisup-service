@@ -11,6 +11,7 @@ import { SendRoistatModule } from "../send-roistat/send-roistat.module";
 import { UtilsModule } from "../utils/utils.module";
 import { ImportModule } from "../import/import.module";
 import { GlonassModule } from "../glonass/glonass.module";
+import { RegDocModule } from "../reg-doc/reg-doc.module";
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { GlonassModule } from "../glonass/glonass.module";
     SendRoistatModule,
     UtilsModule,
     ImportModule,
-    GlonassModule
+    GlonassModule,
+    RegDocModule
   ],
   controllers: [AppController],
   providers: [AppService],

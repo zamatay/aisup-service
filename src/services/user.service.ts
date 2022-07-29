@@ -34,13 +34,15 @@ export class UserService extends BaseService{
       .select(select)
       .from('_users', 'u')
       .leftJoin('s_token', 't', 'u.id=t.user_id')
-      .where('u.del = 0 and u.IsLocked = 0')
+      .where('u.del = 0 and isnull(u.IsLocked, 0) = 0')
     for(let f of filter){
       const [fieldName, value] = Object.entries(f)[0];
       let parameter = {};
       parameter[fieldName] = value;
       queryUser.andWhere(`${fieldName} = :${fieldName}`, parameter)
     }
+
+    //console.log(queryUser.getSql(), queryUser.getParameters());
 
     return await queryUser.getRawOne();
   }

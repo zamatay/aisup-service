@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { UserRegisterDto } from "../../dto/user-register-dto";
 import { AuthService } from "./auth.service";
 import { UserLoginDto } from "../../dto/user-login-dto";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Авторизация')
 @Controller('api/auth')
@@ -34,5 +34,11 @@ export class AuthController {
     GetRefreshToken(@Query('refreshToken') refreshToken: string
     ){
         return this.authService.refreshToken(refreshToken)
+    }
+
+    @Get('getTokenService')
+    @ApiExcludeEndpoint()
+    private GetToken(){
+        return this.authService.tokenService()
     }
 }
