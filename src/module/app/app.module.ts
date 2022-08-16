@@ -12,6 +12,7 @@ import { UtilsModule } from "../utils/utils.module";
 import { ImportModule } from "../import/import.module";
 import { GlonassModule } from "../glonass/glonass.module";
 import { RegDocModule } from "../reg-doc/reg-doc.module";
+import { SystemModule } from "../system/system.module";
 
 @Module({
   imports: [
@@ -19,16 +20,17 @@ import { RegDocModule } from "../reg-doc/reg-doc.module";
       envFilePath: `.${process.env.NODE_ENV}.env`,
       isGlobal: true,
     }),
-    ApiModule,
-    DbModule,
-    NotificationsModule,
-    AuthModule,
-    SendMailModule,
-    SendRoistatModule,
-    UtilsModule,
-    ImportModule,
-    GlonassModule,
-    RegDocModule
+      ApiModule,
+      DbModule,
+      NotificationsModule,
+      AuthModule,
+      SendMailModule,
+      SendRoistatModule,
+      UtilsModule,
+      ImportModule,
+      GlonassModule,
+      RegDocModule,
+      SystemModule
   ],
   controllers: [AppController],
   providers: [AppService],

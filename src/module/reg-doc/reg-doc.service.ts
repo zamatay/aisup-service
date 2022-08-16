@@ -25,12 +25,19 @@ export class RegDocService extends BaseService{
         try {
             const query = this.manager.createQueryBuilder()
                 .from('d_Documents', 'd')
-                .select(['id', 'code', 'date', 'documentgroup_id', 'documnettype_id as documenttype_id', 'staff_id', 'description'])
+                .innerJoin(qb => qb
+                        .disableEscaping()
+                        .select(['d1.id',  'f.[files]'])
+                        .from("d_Documents d1 outer apply (select id as id, filename as fileName, description as description from _files where del = 0 and line_id = d1.id and table_id = 52701 for json PATH)", "f(files)")
+                , 'd1', 'd1.id = d.id')
+                .select(['d.id', 'd.code', 'd.date', 'd.documentgroup_id', 'd.documnettype_id as documenttype_id', 'd.staff_id', 'd.description', 'd1.files'])
                 .where('del=0 and IsNull(IsNotConfirmed, 0) = 0 and IsNull(IsNull(IsNotConfirmed, 0), 0) = 0');
+            // )
             if (params)
                 this.addFilter(query, params, canFilter);
             this.prepareOffset(query, params)
-            return await query.execute();
+            const data = await query.execute();
+            return await data;
         } catch (e) {
             this.telegramService.sendMessage(`Error on RegDocService getDocuments\r\n${e.message}`)
         }

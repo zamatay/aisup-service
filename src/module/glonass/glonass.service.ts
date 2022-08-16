@@ -45,7 +45,7 @@ export class GlonassService extends BaseService{
         });
     }
 
-    @Cron(`0 23 * * *`, {name: 'glonass'})
+    @Cron(`0 22 * * *`, {name: 'glonass'})
     async handleCron(): Promise<void>{
         try { // логинимся
             const data = await firstValueFrom(this.httpClient.get(api.login()));
@@ -66,10 +66,13 @@ export class GlonassService extends BaseService{
                     let objectData;
                     // ждем пока все выполнится без ошибок но не более 5 раз
                     while (!(objectData = await this.getPromiseData(promises)) || exceptCount < 5) {
+                        this.telegramService.sendMessage(`Произошла ошибка во время выполнения запроса к Глонасс\r\n${exceptCount}`)
                         exceptCount++;
                     }
                     // собираем в объект
-                    objectData.forEach(item => allData.push(item.data));
+                    if (objectData) {
+                        objectData.forEach(item => allData.push(item.data));
+                    }
                 }
                 this.saveToFile(allData);
                 await this.query("exec m_ImportGlonasTransportDetail :data", { data: JSON.stringify(allData) });
