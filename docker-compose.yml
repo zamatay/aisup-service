@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  nestjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vkbn
+    container_name: vkbn
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      - NODE_ENV=production
+
