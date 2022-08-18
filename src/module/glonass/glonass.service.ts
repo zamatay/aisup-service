@@ -9,7 +9,7 @@ import { api } from "./api";
 
 @Injectable()
 export class GlonassService extends BaseService{
-    private _CHUNK_DATA: number = 150;
+    private _CHUNK_DATA: number = 100;
 
     constructor(props, private readonly httpClient: HttpService, private readonly telegramService: TelegramService) {
         super(props);
@@ -24,6 +24,7 @@ export class GlonassService extends BaseService{
         try {
             return await Promise.all(promises);
         } catch(e){
+            console.log(e);
             return false
         }
     }
@@ -65,9 +66,10 @@ export class GlonassService extends BaseService{
                     let exceptCount = 0;
                     let objectData;
                     // ждем пока все выполнится без ошибок но не более 5 раз
-                    while (!(objectData = await this.getPromiseData(promises)) || exceptCount < 5) {
-                        this.telegramService.sendMessage(`Произошла ошибка во время выполнения запроса к Глонасс\r\n${exceptCount}`)
+                    while (!(objectData = await this.getPromiseData(promises))) {
+                        console.log(objectData, exceptCount);
                         exceptCount++;
+                        if (exceptCount >= 5) break;
                     }
                     // собираем в объект
                     if (objectData) {
