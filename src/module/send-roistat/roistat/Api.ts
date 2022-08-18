@@ -12,7 +12,7 @@ export class Api {
     const method = apiMethod.type ?? METHOD_GET;
     const url = this.buildUrl(apiMethod);
     const response = await firstValueFrom<AxiosResponse>(this.sendFunction(method, url, post));
-    //console.log(response.headers);
+    //console.log(response);
     const data = response.data;
     if (data["error"]) {
       if (data["error"] === "authentication_failed") {
@@ -24,6 +24,6 @@ export class Api {
   }
 
   buildUrl = (apiMethod) => {
-    return `${this.API_URL}${apiMethod.name}?project=${this._project_id}&key=${this._api_key}`;
+    return `${this.API_URL}${apiMethod.name}?key=${this._api_key}&project=${this._project_id}`;
   }
 }

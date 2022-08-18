@@ -33,6 +33,7 @@ export class SendRoistatService extends BaseService {
             maxContentLength: Infinity
         };
         try {
+            //console.log(url, postData);
             return (method === METHOD_POST) ? this.httpClient.post(url, postData, requestConfig) : this.httpClient.get(url, requestConfig);
         } catch (e) {
             this.telegramService.sendMessage(`Error on sendFunction roistat\r\n${e.message}`);
@@ -121,4 +122,25 @@ export class SendRoistatService extends BaseService {
         }
     }
 
+    async sendStatus() {
+        const data = await this.manager.createQueryBuilder()
+            .select(['cast(cs.id as varchar) id', 'cs.name', 'rsg.Ident type'])
+            .from('r_ClientStatuses', 'cs')
+            .innerJoin('r_RoistatStatusesGroup', 'rsg', 'cs.RoistatStatusesGroup_id = rsg.id')
+            .where('cs.del = 0')
+            .execute()
+
+        let response = await this.project_old_data.api().send(Methods.SET_STATUSES, data);
+        await this.saveResponse(data, response);
+
+        response = await this.project_new_data.api().send(Methods.SET_STATUSES, data);
+        await this.saveResponse(data, response);
+
+        return response;
+    }
 }
+
+/*
+https://cloud.roistat.com/api/v1/project/set-statuses?key=150756fd0f48e9f515c43ef4281c11f5&project=195481
+https://cloud.roistat.com/api/v1/project/set-statuses?key=150756fd0f48e9f515c43ef4281c11f5&project=129322
+*/
