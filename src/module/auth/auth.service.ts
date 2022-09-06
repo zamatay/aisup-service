@@ -130,7 +130,7 @@ export class AuthService extends BaseService{
         }
         const {refreshToken: token, ...data} = item;
         // генерим токены
-        return this.jwtService.sign(data, {expiresIn: '1y'});
+        return this.jwtService.sign(data, {expiresIn: '10y'});
         //
         // return this.returnOk({token: this.getToken(data)})
     }

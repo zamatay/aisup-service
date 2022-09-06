@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
 import { RegDocService } from "./reg-doc.service";
 import {
     IRegDocument,
@@ -8,8 +8,10 @@ import {
     IRegDocumentType
 } from "./dto/document-dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "../../guards/jwt-auth-guard";
 
-@ApiTags('Регдаментные документы')
+@UseGuards(JwtAuthGuard)
+@ApiTags('Регламентные документы')
 @Controller('api/reg-doc')
 export class RegDocController {
 

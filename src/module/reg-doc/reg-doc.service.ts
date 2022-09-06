@@ -35,7 +35,6 @@ export class RegDocService extends BaseService{
             // )
             if (params)
                 this.addFilter(query, params, canFilter);
-            this.prepareOffset(query, params)
             const data = await query.execute();
             return await data;
         } catch (e) {

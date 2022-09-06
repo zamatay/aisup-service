@@ -13,6 +13,8 @@ import { ImportModule } from "../import/import.module";
 import { GlonassModule } from "../glonass/glonass.module";
 import { RegDocModule } from "../reg-doc/reg-doc.module";
 import { SystemModule } from "../system/system.module";
+import { TaskModule } from "../task/task.module";
+import { CommonModule } from "../common/common.module";
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import { SystemModule } from "../system/system.module";
       ImportModule,
       GlonassModule,
       RegDocModule,
-      SystemModule
+      SystemModule,
+      TaskModule,
+      CommonModule
   ],
   controllers: [AppController],
   providers: [AppService],

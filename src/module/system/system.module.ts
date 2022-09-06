@@ -3,9 +3,11 @@ import { SystemController } from './system.controller';
 import { SystemService } from './system.service';
 import { SambaService } from "./samba.service";
 import { FileService } from './file.service';
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   controllers: [SystemController],
-  providers: [SystemService, SambaService, FileService]
+  providers: [SystemService, SambaService, FileService],
+  imports: [AuthModule]
 })
 export class SystemModule {}

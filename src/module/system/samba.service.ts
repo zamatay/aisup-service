@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import { BaseService } from "../../services/base.service";
-import * as Buffer from "buffer";
+import { Readable } from "stream";
 
+export interface SMB2Readable extends Readable {
+    fileSize: number;
+}
 @Injectable()
 export class SambaService extends BaseService{
-    private readonly smb;
 
     constructor(props) {
         super(props);
@@ -20,7 +22,7 @@ export class SambaService extends BaseService{
         const idx = allowShare.findIndex(item=>fileName.toLowerCase().startsWith(item.toLowerCase()));
 
         if (idx >= 0) {
-            const share = allowShare[idx].replace('vkbdisk', '192.168.0.8')
+            const share = allowShare[idx].replace('\\\\vkbdisk', '\\\\192.168.0.8')
             fileName = fileName.substring(allowShare[idx].length + 1).replace(/\\/g, '/');
             return [new SMB2({
                 share
@@ -29,6 +31,7 @@ export class SambaService extends BaseService{
                 //, password: "ldytbcyc"
                 , username: 'ApacheImages333'
                 , password: 'HJDfgt67YudF78@'
+                ,
             }), fileName];
         }
         return null;
@@ -36,14 +39,11 @@ export class SambaService extends BaseService{
 
     async readFile(fileName: string): Promise<any>{
         const [smb, file] = this.getSamba(fileName);
-        return await new Promise((resolve, reject)=>{
-            if (smb){
-                smb.readFile(file, (err, data: Buffer)=>{
-                    if (err) reject(err);
-                    resolve(data);
-                })
-            } else
-                resolve(false);
-        })
+        return await smb.readFile(file);
+    }
+
+    async readStream(fileName: string): Promise<SMB2Readable>{
+        const [smb, file] = this.getSamba(fileName);
+        return await smb.createReadStream(file);
     }
 }

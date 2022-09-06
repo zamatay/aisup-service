@@ -8,7 +8,6 @@ export class FileService extends BaseService{
             .from('_Files', 'f')
             .where('id in (:...id)', { id });
         const data = await query.execute();
-        console.log(data);
         return data.map(i=>i.FileName);
     }
 }
