@@ -116,7 +116,6 @@ export class BaseService {
                     selects.push(`${name} as ${select[name]}`);
                 }
             }
-            console.log(selects);
             return selects;
         } catch (e){
             return this.defaultReturn;
