@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { NotifyTask, Task, TaskRead, TaskStates, TaskValue } from "./dto/task-dto";
 import { BaseService } from "../../services/base.service";
 import { User } from "../../dto/User";
+import { IdDto } from "../../dto/id-dto";
 
 @Injectable()
 export class TaskService extends BaseService{
@@ -124,39 +125,63 @@ export class TaskService extends BaseService{
         }
     }
 
-    async getTaskStates(ids: number[], staff_id: number): Promise<TaskStates[]>{
-        if (typeof ids === 'string'){
-            ids = [ids];
-        } else if (typeof ids === 'object' && !Array.isArray(ids)){
-            ids = Object.values(ids);
+    async getTaskStates(ids: number[], staff_id: number): Promise<TaskStates[] | false>{
+        try {
+            if (typeof ids === "string") {
+                ids = [ids];
+            } else if (typeof ids === "object" && !Array.isArray(ids)) {
+                ids = Object.values(ids);
+            }
+            return await this.manager.createQueryBuilder()
+                .select(["d.id", "cast(cast(FactDateTo as bit) as int) IsExec", "cast(Confirmation as int) IsConfirm", "cast(cast(notRead.id as bit) as int) IsNotRead", "cast(Disabled as int) IsDisable"])
+                .from("ds_disposals", "d")
+                .leftJoin(`(SELECT id FROM dbo.GetNotifyTaskByType(:staff_id, 1) where type = 2)`, "notRead", "notRead.id = d.id", { staff_id })
+                .where("d.id in (:...ids)", { ids })
+                .execute();
+        } catch (e) {
+            console.log(e);
+            return false;
         }
-        return await this.manager.createQueryBuilder()
-            .select(['d.id', 'cast(cast(FactDateTo as bit) as int) IsExec', 'cast(Confirmation as int) IsConfirm', 'cast(cast(notRead.id as bit) as int) IsNotRead', 'cast(Disabled as int) IsDisable'])
-            .from('ds_disposals', 'd')
-            .leftJoin(`(SELECT id FROM dbo.GetNotifyTaskByType(:staff_id, 1) where type = 2)`, 'notRead', 'notRead.id = d.id', {staff_id})
-            .where('d.id in (:...ids)', {ids})
-            .execute()
     }
 
-    async getReaders(ids: number[] | number): Promise<TaskRead[]> {
-        if (!Array.isArray(ids)){
-            ids = [ids];
+    async getReaders(ids: number[] | number): Promise<TaskRead[] | false> {
+        try {
+            if (!Array.isArray(ids)) {
+                ids = [ids];
+            }
+            return await this.manager.createQueryBuilder()
+                .select(["disposal as id", "personal staff_id", "r.DateCreate as date", "s.fio"])
+                .from("ds_readed", "r")
+                .leftJoin("ok_staff", "s", "s.id=r.personal")
+                .where("r.del = 0 and disposal in (:...ids)", { ids })
+                .orderBy("r.dateCreate")
+                .execute();
+        } catch (e) {
+            console.log(e);
+            return false;
         }
-        return await this.manager.createQueryBuilder()
-            .select(['disposal as id', 'personal staff_id', 'r.DateCreate as date', 's.fio'])
-            .from('ds_readed', 'r')
-            .leftJoin('ok_staff', 's', 's.id=r.personal')
-            .where('r.del = 0 and disposal in (:...ids)', {ids})
-            .orderBy('r.dateCreate')
-            .execute()
     }
-v
+
     async getUrgency() {
-        return await this.manager.createQueryBuilder()
-            .select(['id', 'name'])
-            .from('ds_urgency', 'u')
-            .where('del = 0 ')
-            .orderBy('name')
-            .execute()
+        try {
+            return await this.manager.createQueryBuilder()
+                .select(["id", "name"])
+                .from("ds_urgency", "u")
+                .where("del = 0 ")
+                .orderBy("name")
+                .execute();
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
+    async getNotReaders(staff_id: number): Promise<IdDto[] | false> {
+        try {
+            return await this.query('select id from dbo.GetNotifyTaskByType(:staff_id, 1) where type = 2', {staff_id})
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
     }
 }

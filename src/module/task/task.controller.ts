@@ -3,6 +3,7 @@ import { JwtAuthGuard } from "../../guards/jwt-auth-guard";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { TaskService } from "./task.service";
 import { NotifyTask, Task, TaskRead, TaskStates, TaskValue } from "./dto/task-dto";
+import { IdDto } from "../../dto/id-dto";
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Задачи')
@@ -57,14 +58,14 @@ export class TaskController {
     @ApiOperation({ summary: 'Получить состояние задач'})
     @ApiResponse({ status: 200, description: 'Возвращает состояние переданных задач', type: TaskStates, isArray: true})
     @Get('getTaskStates')
-    async getTaskStates(@Query('ids') ids: number[], @Query('staff_id') staff_id: number): Promise<TaskStates[]>{
+    async getTaskStates(@Query('ids') ids: number[], @Query('staff_id') staff_id: number): Promise<TaskStates[] | false>{
         return await this.taskService.getTaskStates(ids, staff_id);
     }
 
     @ApiOperation({ summary: 'Получить список прочитавших'})
     @ApiResponse({ status: 200, description: 'Возвращает список прочитавших задачу', type: TaskStates, isArray: true})
     @Get('getReaders')
-    async getReaders(@Query('ids') ids: number[], @Req() req): Promise<TaskRead[]>{
+    async getReaders(@Query('ids') ids: number[], @Req() req): Promise<TaskRead[] | false>{
         return await this.taskService.getReaders(ids);
     }
 
@@ -73,6 +74,13 @@ export class TaskController {
     @Get('getUrgency')
     async getUrgency(): Promise<any[]>{
         return await this.taskService.getUrgency();
+    }
+
+    @ApiOperation({ summary: 'Получить непрочитанные задачи'})
+    @ApiResponse({ status: 200, description: 'Возвращает список непрочитанных задач', type: IdDto, isArray: true})
+    @Get('getNotReaders')
+    async getNotReaders(@Query('staff_id') staff_id: number): Promise<IdDto[] | false>{
+        return await this.taskService.getNotReaders(staff_id);
     }
 
 }
