@@ -18,17 +18,18 @@ export class TaskService extends BaseService{
         'plandatefrom': 'date',
         'isexecute': {alias: "cast(isnull(factDateTo,0) as bit)"},
         'urgency_id': {alias: 'urgency', type: "integer"},
-        'task_group_id': {alias: 'workgroup_id', type: "integer"}
+        'task_group_id': {alias: 'workgroup_id', type: "integer"},
+        'dateedit': {alias: 'isnull(DateEdit, DateCreate)', type: "date"},
     }
 
     async getTasks(params): Promise<Task[] | false> {
         try {
-            const { fields } = params;
+            const { fields, ...filter} = params;
             const query = this.manager.createQueryBuilder()
                 .from("DS_Disposals", "d")
                 .where("d.del = 0");
             if (params)
-                this.addFilter(query, params, this.taskMeta);
+                this.addFilter(query, filter, this.taskMeta);
             query.select(this.getSelectMeta(fields, this.taskMeta));
             return await query.execute();
         } catch (e) {

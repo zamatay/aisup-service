@@ -124,10 +124,12 @@ export class BaseService {
     addFilter(query: SelectQueryBuilder<any>, data, filterObject: Object) {
         if (!query.expressionMap.wheres.length)
             query.where('del=0');
+        console.log(filterObject, data);
         for (const paramName in data){
             if (filterObject[paramName.toLowerCase()]){
                 let value=data[paramName];
                 let [rawValue, condition] = this.parseFilterValue(value);
+                console.log([rawValue, condition]);
                 if (filterObject[paramName.toLowerCase()] === 'date'){
                     value = new Date(rawValue);
                 }
