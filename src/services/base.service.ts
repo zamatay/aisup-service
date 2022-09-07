@@ -100,15 +100,14 @@ export class BaseService {
             if (select === '*' ){
                 return this.defaultReturn;
             }
-            console.log(select);
             if (!select){
                 select = Object.keys(meta);
             }
             const selects = []
             for (const name in select){
                 // если нашли в метаинформации берем оттуда
-                if (meta.hasOwnProperty(name) && typeof meta[name] === 'object') {
-                    selects.push(`${meta[name].alias} as ${name}`);
+                if (meta.hasOwnProperty(select[name]) && typeof meta[select[name]] === 'object') {
+                    selects.push(`${meta[select[name]].alias} as ${select[name]}`);
                 // если значение в массиве не именнованное то берем просто название
                 } else if(Number.isInteger(Number(name))) {
                     selects.push(`${select[name]}`);
