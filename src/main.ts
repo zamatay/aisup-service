@@ -11,13 +11,16 @@ async function bootstrap() {
   app.enableCors();
   app.use(json({limit: '50mb'}));
 
+  //config swagger
   const configSwagger = new DocumentBuilder()
     .setTitle('Api компаний ВКБ')
     .setDescription('Документация к api')
     .setVersion('2.0.0')
     .build()
+  const swaggerOptions = {swaggerOptions: { defaultModelsExpandDepth: -1 }}
   const document = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('api/docs', app, document)
+  SwaggerModule.setup('api/docs', app, document, swaggerOptions)
+  //end config swagger
 
   //app.useGlobalGuards(JwtAuthGuard);
   await app.listen(PORT, ()=>{
