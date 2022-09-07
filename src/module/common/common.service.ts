@@ -30,7 +30,6 @@ export class CommonService extends BaseService{
             .leftJoin('OK_Shtat', 'os', 'os.id = oph.Shtat_ID')
             .where('s.del = 0 and s.ReleaseDate is null')
         this.addFilter(query, params, meta)
-        console.log(query.getSql());
         return await query.execute();
     }
 }

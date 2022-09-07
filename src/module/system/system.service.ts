@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { BaseService } from "../../services/base.service";
 import { AddCommentDto, CommentDto } from "../../dto/comment-dto";
 import { User } from "../../dto/User";
@@ -58,7 +58,7 @@ export class SystemService extends BaseService{
             const { fields = "*", table, ...filter } = params;
             const isFind = this.allowTables.filter(item=>item.toLowerCase() === table.toLowerCase());
             if (!isFind){
-                throw new BadRequestException()
+                throw new NotFoundException('Table not found');
             }
             const query = this.manager.createQueryBuilder()
                 .select(this.getSelectMeta(fields, this.meta))

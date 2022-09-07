@@ -5,6 +5,7 @@ import { raw } from "express";
 
 @Injectable()
 export class BaseService {
+    defaultReturn: ['*'];
 
     constructor(
         @InjectEntityManager()
@@ -79,33 +80,48 @@ export class BaseService {
     }
 
     getSelect(select){
-        const selects = []
-        for (const name in select){
-            if (typeof select[name] === 'string'){
-                selects.push(name)
-            } else {
-                selects.push(`${select[name].alias} as ${name}`)
+        try {
+            const selects = [];
+            for (const name in select) {
+                if (typeof select[name] === "string") {
+                    selects.push(name);
+                } else {
+                    selects.push(`${select[name].alias} as ${name}`);
+                }
             }
+            return selects;
+        } catch (e) {
+            return this.defaultReturn;
         }
-        return selects;
     }
 
     getSelectMeta(select, meta){
-        if (select === '*' ){
-            return ['*'];
-        }
-        if (!select){
-            select = Object.keys(meta);
-        }
-        const selects = []
-        for (const name of select){
-            if (meta.hasOwnProperty(name) && typeof meta[name] === 'object') {
-                selects.push(`${meta[name].alias} as ${name}`);
-            } else {
-                selects.push(name)
+        try {
+            if (select === '*' ){
+                return this.defaultReturn;
             }
+            console.log(select);
+            if (!select){
+                select = Object.keys(meta);
+            }
+            const selects = []
+            for (const name in select){
+                // если нашли в метаинформации берем оттуда
+                if (meta.hasOwnProperty(name) && typeof meta[name] === 'object') {
+                    selects.push(`${meta[name].alias} as ${name}`);
+                // если значение в массиве не именнованное то берем просто название
+                } else if(Number.isInteger(Number(name))) {
+                    selects.push(`${select[name]}`);
+                // а так берем название как значение
+                } else {
+                    selects.push(`${name} as ${select[name]}`);
+                }
+            }
+            console.log(selects);
+            return selects;
+        } catch (e){
+            return this.defaultReturn;
         }
-        return selects;
     }
     addFilter(query: SelectQueryBuilder<any>, data, filterObject: Object) {
         if (!query.expressionMap.wheres.length)
