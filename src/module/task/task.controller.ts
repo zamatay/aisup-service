@@ -83,4 +83,11 @@ export class TaskController {
         return await this.taskService.getNotReaders(staff_id);
     }
 
+    @ApiOperation({ summary: 'Получить задачи по тексту комментария'})
+    @ApiResponse({ status: 200, description: 'Возвращает id найденных задач', type: IdDto, isArray: true})
+    @Get('getTaskByCommentText')
+    async getTaskByCommentText(@Query('text') text: string): Promise<IdDto[] | false>{
+        return await this.taskService.getTaskByCommentText(text);
+    }
+
 }

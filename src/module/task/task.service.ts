@@ -184,4 +184,18 @@ export class TaskService extends BaseService{
             return false;
         }
     }
+
+    async getTaskByCommentText(text: string) {
+        try {
+            if (text)
+            return await this.manager.createQueryBuilder()
+                .select(["object_id as id"])
+                .from("_note", "u")
+                .where("del = 0 and type_id=1127 and note_text like :text", {text})
+                .execute();
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
 }
