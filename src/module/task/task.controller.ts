@@ -90,4 +90,10 @@ export class TaskController {
         return await this.taskService.getTaskByCommentText(text);
     }
 
+    @ApiOperation({ summary: 'Получить связные задачи'})
+    @ApiResponse({ status: 200, description: 'Возвращает id найденных задач', type: IdDto, isArray: true})
+    @Get('getRelatedTask')
+    async getRelatedTask(@Query('id') task_id: string): Promise<IdDto[] | false>{
+        return await this.taskService.getRelatedTask(task_id);
+    }
 }
