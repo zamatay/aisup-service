@@ -3,6 +3,7 @@ import { NotifyTask, Task, TaskRead, TaskStates, TaskValue } from "./dto/task-dt
 import { BaseService } from "../../services/base.service";
 import { User } from "../../dto/User";
 import { IdDto } from "../../dto/id-dto";
+import { SelectQueryBuilder } from "typeorm";
 
 @Injectable()
 export class TaskService extends BaseService{
@@ -21,6 +22,17 @@ export class TaskService extends BaseService{
         'urgency_id': {alias: 'urgency', type: "integer"},
         'task_group_id': {alias: 'workgroup_id', type: "integer"},
         'dateedit': {alias: 'isnull(DateEdit, DateCreate)', type: "date"},
+    }
+
+    addStaffFilter(staff_id: number, query: SelectQueryBuilder<any>){
+        const tableAlias = query.alias ?? 'd';
+        query.andWhere((qb)=>qb.where(`
+            sender=:staff_id or receiver=:staff_id or :staff_id in (select staff_id from  c_DisposalMembers where del = 0 and disposal_id = ${tableAlias}.id
+                union
+            select s.id
+            from GroupParticipant g
+                inner join ok_staff s on s.id = g.Participantid and g.participantType=735
+            where g.del = 0 and g.WorkGroupID=${tableAlias}.WorkGroup_id)`, {staff_id}));
     }
 
     async getTasks(params): Promise<Task[] | false> {
@@ -199,7 +211,7 @@ export class TaskService extends BaseService{
         }
     }
 
-    async getRelatedTask(task_id: string) {
+    async getRelatedTask(staff_id: number, task_id: string) {
         try {
             const query = this.manager.createQueryBuilder()
                 .select(["id"])
@@ -210,7 +222,7 @@ export class TaskService extends BaseService{
                     .where('d1.id=:task_id', {task_id}), 'd1'
                 , 'd1.rootParent in (d.rootParent, d.id)', {task_id})
                 .where("d.del=0")
-            console.log(query.getSql(), query.getParameters());
+            this.addStaffFilter(staff_id, query);
             return await query.execute()
         } catch (e) {
             console.log(e);
