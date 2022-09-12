@@ -204,8 +204,13 @@ export class TaskService extends BaseService{
             const query = this.manager.createQueryBuilder()
                 .select(["id"])
                 .from("ds_disposals", "d")
-                .innerJoin((qb)=>qb.select('rootParent').from('ds_disposals', 'd1').where('d1.id=:task_id and rootParent != 0', {task_id}), 'd1', 'd.rootParent=d1.rootParent or d.id = d1.rootParent or d.id = :task_id', {task_id})
+                .innerJoin((qb)=>qb
+                    .select('case when rootParent = 0 then id else rootParent end rootParent')
+                    .from('ds_disposals', 'd1')
+                    .where('d1.id=:task_id', {task_id}), 'd1'
+                , 'd1.rootParent in (d.rootParent, d.id)', {task_id})
                 .where("d.del=0")
+            console.log(query.getSql(), query.getParameters());
             return await query.execute()
         } catch (e) {
             console.log(e);
