@@ -88,27 +88,6 @@ export class TaskService extends BaseService{
         }
     }
 
-    async toggleExecute(task_id: number, user_id: number): Promise<Task | false> {
-        try {
-            const data = await this.manager.createQueryBuilder()
-                .update("DS_Disposals")
-                .set({
-                    FactDateTo: () => "case when factDateTo is null then getDate() else null end",
-                    Editor: user_id,
-                    DateEdit: () => "getDate()"
-                })
-                .where("id=:id", { id: task_id })
-                .execute();
-            if (data.affected === 1)
-                return this.getTaskById(task_id);
-            else
-                return false;
-        } catch (e) {
-            console.log(e.message);
-            return false
-        }
-    }
-
     async getNotify(staff_id: number) : Promise<NotifyTask> {
         return await this.query("exec GetNotifyTask :staff_id, 1, 0, 1, 0", {staff_id})
     }
@@ -131,9 +110,30 @@ export class TaskService extends BaseService{
         }
     }
 
-    async toggleRead(task_id: number, user: User): Promise<TaskValue | false> {
+    async toggleExecute(task_id: number, user_id: number): Promise<Task | false> {
         try {
-            return (await this.query('exec ds_toggleRead :user_id, :staff_id, :task_id', { user_id: user.id, staff_id: user.staff_id, task_id }))[0];
+            const data = await this.manager.createQueryBuilder()
+                .update("DS_Disposals")
+                .set({
+                    FactDateTo: () => "case when factDateTo is null then getDate() else null end",
+                    Editor: user_id,
+                    DateEdit: () => "getDate()"
+                })
+                .where("id=:id", { id: task_id })
+                .execute();
+            if (data.affected === 1)
+                return this.getTaskById(task_id);
+            else
+                return false;
+        } catch (e) {
+            console.log(e.message);
+            return false
+        }
+    }
+
+    async toggleRead(task_id: number, staff_id: number, user: User): Promise<TaskValue | false> {
+        try {
+            return (await this.query('exec ds_toggleRead :user_id, :staff_id, :task_id', { user_id: user.id, staff_id, task_id }))[0];
         } catch (e) {
             console.log(e.message);
             return false

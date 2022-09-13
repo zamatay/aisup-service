@@ -44,8 +44,8 @@ export class TaskController {
     @ApiOperation({ summary: 'Прочитать/снять прочитанность задаче' })
     @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
     @Post('toggleRead')
-    async toggleRead(@Body('task_id') task_id: number, @Req() req): Promise<TaskValue | boolean>{
-        return await this.taskService.toggleRead(task_id, req.user);
+    async toggleRead(@Body('task_id') task_id: number, @Body('staff_id') staff_id: number, @Req() req): Promise<TaskValue | boolean>{
+        return await this.taskService.toggleRead(task_id, staff_id, req.user);
     }
 
     @ApiOperation({ summary: 'Получить события по задаче' })
