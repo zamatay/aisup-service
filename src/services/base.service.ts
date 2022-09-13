@@ -104,7 +104,7 @@ export class BaseService {
             }
             const selects = []
             for (const name in select){
-                // если нашли в метаинформации берем оттуда
+                // если нашли в метаинформации берем оттуда реальное название поля и возращаем как переданное
                 if (meta.hasOwnProperty(select[name]) && typeof meta[select[name]] === 'object') {
                     selects.push(`${meta[select[name]].alias} as ${select[name]}`);
                 // если значение в массиве не именнованное то берем просто название

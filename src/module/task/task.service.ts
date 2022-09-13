@@ -37,12 +37,15 @@ export class TaskService extends BaseService{
 
     async getTasks(params): Promise<Task[] | false> {
         try {
-            const { fields, ...filter} = params;
+            const { fields, staff_id, ...filter} = params;
             const query = this.manager.createQueryBuilder()
                 .from("DS_Disposals", "d")
                 .where("d.del = 0");
-            if (params)
+            if (filter)
                 this.addFilter(query, filter, this.taskMeta);
+            if (staff_id){
+                this.addStaffFilter(staff_id, query);
+            }
             query.select(this.getSelectMeta(fields, this.taskMeta));
             return await query.execute();
         } catch (e) {
