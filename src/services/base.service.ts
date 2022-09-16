@@ -63,11 +63,11 @@ export class BaseService {
     }
 
     async saveResponse(request, response): Promise<void>{
-    await this.manager.createQueryBuilder()
-      .insert()
-      .into('s_post_log', ['request', 'response', 'date'])
-      .values({request: JSON.stringify(request), response: JSON.stringify(response), date:()=>"GetDate()"})
-      .execute()
+        await this.manager.createQueryBuilder()
+          .insert()
+          .into('s_post_log', ['request', 'response', 'date'])
+          .values({request: JSON.stringify(request), response: JSON.stringify(response), date:()=>"GetDate()"})
+          .execute()
     }
 
     parseFilterValue(value: string){
@@ -126,15 +126,30 @@ export class BaseService {
         for (const paramName in data){
             if (filterObject[paramName.toLowerCase()]){
                 let value=data[paramName];
-                let [rawValue, condition] = this.parseFilterValue(value);
-                if (filterObject[paramName.toLowerCase()] === 'date'){
-                    value = new Date(rawValue);
+                // если передать id={fr:1, to:2}
+                // то отработает фильтр between
+                if (value[0] == '{'){
+                    const objectValue = JSON.parse(value);
+                    if (objectValue.hasOwnProperty('fr') && objectValue.hasOwnProperty('to')){
+                        const fr = (filterObject[paramName.toLowerCase()] === 'date') ? new Date(objectValue['fr']) : objectValue['fr'];
+                        const to = (filterObject[paramName.toLowerCase()] === 'date') ? new Date(objectValue['to']) : objectValue['to'];
+                        query.andWhere(`${paramName} between :fr and :to`, {fr, to});
+                    }
+                // иначе передаем id=>180000
+                // что значит id > 180000
+                } else {
+                    let [rawValue, condition] = this.parseFilterValue(value);
+                    if (filterObject[paramName.toLowerCase()] === 'date'){
+                        value = new Date(rawValue);
+                    } else {
+                        value = rawValue;
+                    }
+                    query.andWhere(`${paramName}${condition}:${paramName}`, {[paramName]: value});
                 }
-                query.andWhere(`${paramName}${condition}:${paramName}`, {[paramName]: rawValue});
             }
         }
-        this.prepareOffset(query, data);
         this.addOrder(query, data);
+        this.prepareOffset(query, data);
     }
 
     prepareOffset(query: SelectQueryBuilder<any>, filter){
@@ -144,7 +159,7 @@ export class BaseService {
     }
 
     private addOrder(query: SelectQueryBuilder<any>, filter) {
-        const {order} = filter;
+        const {order = 'id'} = filter;
         if (order) {
             const orders = order.split(" ");
             while (orders.length) {

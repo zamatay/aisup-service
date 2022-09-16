@@ -14,6 +14,7 @@ export class TaskService extends BaseService{
         'task': {alias: 'zadanie', type: 'number'},
         'theme': 'string',
         'disabled': 'boolean',
+        'confirmation': 'boolean',
         'receiver_id': {alias: 'receiver', type: "integer"},
         'sender_id': {alias: 'sender', type: "integer"},
         'plandateto': 'date',
@@ -43,10 +44,8 @@ export class TaskService extends BaseService{
                 .where("d.del = 0");
             if (filter)
                 this.addFilter(query, filter, this.taskMeta);
-            if (staff_id){
-                this.addStaffFilter(staff_id, query);
-            }
             query.select(this.getSelectMeta(fields, this.taskMeta));
+            //console.log(query.getSql());
             return await query.execute();
         } catch (e) {
             console.log(e.message);

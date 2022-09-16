@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { BaseService } from "../../services/base.service";
 import { AddCommentDto, CommentDto } from "../../dto/comment-dto";
 import { User } from "../../dto/User";
@@ -26,8 +26,8 @@ export class SystemService extends BaseService{
                 .where("n.del = 0 and n.type_id = :object_id and n.object_id=:id", { object_id, id })
                 .execute();
         } catch (e) {
-            return false;
             console.log(e.message);
+            return false;
         }
     }
 
@@ -56,6 +56,8 @@ export class SystemService extends BaseService{
     async getData(params: any) {
         try {
             const { fields = "*", table, ...filter } = params;
+            if (!table)
+                return false;
             const isFind = this.allowTables.filter(item=>item.toLowerCase() === table.toLowerCase());
             if (!isFind){
                 throw new NotFoundException('Table not found');

@@ -67,7 +67,6 @@ export class GlonassService extends BaseService{
                     let objectData;
                     // ждем пока все выполнится без ошибок но не более 5 раз
                     while (!(objectData = await this.getPromiseData(promises))) {
-                        console.log(objectData, exceptCount);
                         exceptCount++;
                         if (exceptCount >= 5) break;
                     }
