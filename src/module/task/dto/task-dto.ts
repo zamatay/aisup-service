@@ -87,7 +87,6 @@ export class Task {
     })
     task_group_id: number;
 }
-
 export class NotifyTask {
     @ApiProperty({
         type: 'integer',
@@ -104,7 +103,6 @@ export class NotifyTask {
     type:            number;
 
 }
-
 export class TaskValue {
     @ApiProperty({
         type: 'integer',
@@ -157,7 +155,6 @@ export class TaskStates {
     })
     IsDisable: null;
 }
-
 export class TaskRead {
     @ApiProperty({
         type: 'number',

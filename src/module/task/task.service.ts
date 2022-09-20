@@ -66,27 +66,6 @@ export class TaskService extends BaseService{
         }
     }
 
-    async setExecute(task_id, value, user_id): Promise<Task | boolean> {
-        try {
-            const data = await this.manager.createQueryBuilder()
-                .update("DS_Disposals")
-                .set({
-                    FactDateTo: () => (value == 1) ? "getDate()" : "NULL",
-                    Editor: user_id,
-                    DateEdit: () => "getDate()"
-                })
-                .where("id=:id", { id: task_id })
-                .execute();
-            if (data.affected === 1)
-                return this.getTaskById(task_id);
-            else
-                return false;
-        } catch (e) {
-            console.log(e.message);
-            return false
-        }
-    }
-
     async getNotify(staff_id: number) : Promise<NotifyTask> {
         return await this.query("exec GetNotifyTask :staff_id, 1, 0, 1, 0", {staff_id})
     }
@@ -103,6 +82,15 @@ export class TaskService extends BaseService{
                     , { staff_id: user.staff_id, task_id });
             }
             return {task_id, value};
+        } catch (e) {
+            console.log(e.message);
+            return false
+        }
+    }
+
+    async toggleRead(task_id: number, staff_id: number, user: User): Promise<TaskValue | false> {
+        try {
+            return (await this.query('exec ds_toggleRead :user_id, :staff_id, :task_id', { user_id: user.id, staff_id, task_id }))[0];
         } catch (e) {
             console.log(e.message);
             return false
@@ -130,9 +118,105 @@ export class TaskService extends BaseService{
         }
     }
 
-    async toggleRead(task_id: number, staff_id: number, user: User): Promise<TaskValue | false> {
+    async setExecute(task_id, value, user_id): Promise<Task | boolean> {
         try {
-            return (await this.query('exec ds_toggleRead :user_id, :staff_id, :task_id', { user_id: user.id, staff_id, task_id }))[0];
+            const data = await this.manager.createQueryBuilder()
+                .update("DS_Disposals")
+                .set({
+                    FactDateTo: () => (value == 1) ? "getDate()" : "NULL",
+                    Editor: user_id,
+                    DateEdit: () => "getDate()"
+                })
+                .where("id=:id", { id: task_id })
+                .execute();
+            if (data.affected === 1)
+                return this.getTaskById(task_id);
+            else
+                return false;
+        } catch (e) {
+            console.log(e.message);
+            return false
+        }
+    }
+
+    async toggleConfirm(task_id: number, user_id: number): Promise<Task | false> {
+        try {
+            const data = await this.manager.createQueryBuilder()
+                .update("DS_Disposals")
+                .set({
+                    Confirmation: () => "case when IsNull(Confirmation, 0) = 0 then 1 else null end",
+                    Editor: user_id,
+                    DateEdit: () => "getDate()"
+                })
+                .where("id=:id", { id: task_id })
+                .execute();
+            if (data.affected === 1)
+                return this.getTaskById(task_id);
+            else
+                return false;
+        } catch (e) {
+            console.log(e.message);
+            return false
+        }
+    }
+
+    async setConfirm(task_id, value, user_id): Promise<Task | boolean> {
+        try {
+            const data = await this.manager.createQueryBuilder()
+                .update("DS_Disposals")
+                .set({
+                    Confirmation: () => (value == 1) ? "1" : "NULL",
+                    Editor: user_id,
+                    DateEdit: () => "getDate()"
+                })
+                .where("id=:id", { id: task_id })
+                .execute();
+            if (data.affected === 1)
+                return this.getTaskById(task_id);
+            else
+                return false;
+        } catch (e) {
+            console.log(e.message);
+            return false
+        }
+    }
+
+    async toggleActive(task_id: number, user_id: number): Promise<Task | false> {
+        try {
+            const data = await this.manager.createQueryBuilder()
+                .update("DS_Disposals")
+                .set({
+                    Disabled: () => "case when IsNull(Disabled, 0) = 0 then 1 else null end",
+                    Editor: user_id,
+                    DateEdit: () => "getDate()"
+                })
+                .where("id=:id", { id: task_id })
+                .execute();
+            if (data.affected === 1)
+                return this.getTaskById(task_id);
+            else
+                return false;
+        } catch (e) {
+            console.log(e.message);
+            return false
+        }
+    }
+
+    async setActive(task_id, value, user_id): Promise<Task | boolean> {
+        try {
+            const data = await this.manager.createQueryBuilder()
+                .update("DS_Disposals")
+                .set({
+                    Disabled: () => (value == 1) ? "1" : "NULL",
+                    Editor: user_id,
+                    DateEdit: () => "getDate()"
+                })
+                .where("id=:id", { id: task_id })
+                .execute();
+            if (data.affected === 1)
+                return this.getTaskById(task_id);
+            else
+                return false;
         } catch (e) {
             console.log(e.message);
             return false

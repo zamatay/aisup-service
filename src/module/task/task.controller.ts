@@ -4,6 +4,7 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { TaskService } from "./task.service";
 import { NotifyTask, Task, TaskRead, TaskStates, TaskValue } from "./dto/task-dto";
 import { IdDto } from "../../dto/id-dto";
+import { IdNameDto } from "../../dto/id-name-dto";
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Задачи')
@@ -34,20 +35,47 @@ export class TaskController {
         return await this.taskService.toggleExecute(task_id, req.user.id);
     }
 
-    @ApiOperation({ summary: 'Установить прочитанность задаче' })
+    @ApiOperation({ summary: 'Установить значение прочитанности задаче' })
     @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
     @Post('setRead')
     async read(@Body('task_id') task_id: number, @Body('value') value: boolean, @Req() req): Promise<TaskValue | boolean>{
         return await this.taskService.setRead(task_id, value, req.user);
     }
 
-    @ApiOperation({ summary: 'Прочитать/снять прочитанность задаче' })
+    @ApiOperation({ summary: 'Установить/снять прочитанность задаче' })
     @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
     @Post('toggleRead')
     async toggleRead(@Body('task_id') task_id: number, @Body('staff_id') staff_id: number, @Req() req): Promise<TaskValue | boolean>{
         return await this.taskService.toggleRead(task_id, staff_id, req.user);
     }
 
+    @ApiOperation({ summary: 'Установить значение подтвержденности задаче' })
+    @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
+    @Post('setConfirm')
+    async setConfirm(@Body('task_id') task_id: number, @Body('value') value: boolean, @Req() req): Promise<Task | boolean>{
+        return await this.taskService.setConfirm(task_id, value, req.user);
+    }
+
+    @ApiOperation({ summary: 'Установить/снять подтверждение задаче' })
+    @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
+    @Post('toggleConfirm')
+    async toggleConfirm(@Body('task_id') task_id: number, @Req() req): Promise<Task | boolean>{
+        return await this.taskService.toggleConfirm(task_id, req.user.id);
+    }
+
+    @ApiOperation({ summary: 'Установить значение активности задаче' })
+    @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
+    @Post('setActive')
+    async setActive(@Body('task_id') task_id: number, @Body('value') value: boolean, @Req() req): Promise<Task | boolean>{
+        return await this.taskService.setActive(task_id, value, req.user);
+    }
+
+    @ApiOperation({ summary: 'Установить/снять активность задаче' })
+    @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
+    @Post('toggleActive')
+    async toggleActive(@Body('task_id') task_id: number, @Req() req): Promise<Task | boolean>{
+        return await this.taskService.toggleActive(task_id, req.user.id);
+    }
     @ApiOperation({ summary: 'Получить события по задаче' })
     @ApiResponse({ status: 200, description: 'Возвращает выполненную/cнятую задачу', type: NotifyTask, isArray: true})
     @Get('getNotify')
@@ -69,8 +97,8 @@ export class TaskController {
         return await this.taskService.getReaders(ids);
     }
 
-    @ApiOperation({ summary: 'Получить список прочитавших'})
-    @ApiResponse({ status: 200, description: 'Возвращает список прочитавших задачу', type: TaskStates, isArray: true})
+    @ApiOperation({ summary: 'Получить список Важности'})
+    @ApiResponse({ status: 200, description: 'Возвращает список Важности', type: IdNameDto, isArray: true})
     @Get('getUrgency')
     async getUrgency(): Promise<any[]>{
         return await this.taskService.getUrgency();
