@@ -14,7 +14,7 @@ export class SystemService extends BaseService{
         'date_edit': {alias: "isnull(DateEdit,DateCreate)", type:'date'},
     }
 
-    allowTables = ['ds_urgency', 'ok_staff, workGroup', 'groupParticipant', 'ok_staff'];
+    allowTables = ['ds_urgency', 'ok_staff, workGroup', 'groupParticipant', 'ok_staff', 'qe_tests', 'qe_TestGroups', 'qe_TestTypes', 'Test_question', 'Test_answer', 'Test_require'];
 
     async getComments(object_id: number, id: number): Promise<CommentDto[] | false> {
         try {
