@@ -66,6 +66,7 @@ export class SystemService extends BaseService{
                 .select(this.getSelectMeta(fields, this.meta))
                 .from(table, "a");
             this.addFilter(query, filter, this.meta);
+            //console.log(query.getSql());
             return query.execute();
         } catch (e) {
             console.log(e.message);

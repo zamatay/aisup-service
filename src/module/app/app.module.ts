@@ -15,6 +15,7 @@ import { RegDocModule } from "../reg-doc/reg-doc.module";
 import { SystemModule } from "../system/system.module";
 import { TaskModule } from "../task/task.module";
 import { CommonModule } from "../common/common.module";
+import { TestModule } from "../test/test.module";
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { CommonModule } from "../common/common.module";
       RegDocModule,
       SystemModule,
       TaskModule,
-      CommonModule
+      CommonModule,
+      TestModule
   ],
   controllers: [AppController],
   providers: [AppService],

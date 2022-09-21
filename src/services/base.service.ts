@@ -120,7 +120,7 @@ export class BaseService {
             return this.defaultReturn;
         }
     }
-    addFilter(query: SelectQueryBuilder<any>, data, filterObject: Object) {
+    addFilter(query: SelectQueryBuilder<any>, data, filterObject: Object = {}) {
         if (!query.expressionMap.wheres.length)
             query.where('del=0');
         for (const paramName in data){
@@ -158,7 +158,7 @@ export class BaseService {
         query.offset(offset ?? 0);
     }
 
-    private addOrder(query: SelectQueryBuilder<any>, filter) {
+    public addOrder(query: SelectQueryBuilder<any>, filter) {
         const {order = 'id'} = filter;
         if (order) {
             const orders = order.split(" ");
