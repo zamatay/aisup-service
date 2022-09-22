@@ -1,10 +1,10 @@
-import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
-import {DbModule} from "../db/db.module";
-import {ConfigModule} from "@nestjs/config";
-import {ApiModule} from "../api/api.module";
-import {AuthModule} from "../auth/auth.module";
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { DbModule } from "../db/db.module";
+import { ConfigModule } from "@nestjs/config";
+import { ApiModule } from "../api/api.module";
+import { AuthModule } from "../auth/auth.module";
 import { NotificationsModule } from "../notifications/notifications.module";
 import { SendMailModule } from "../send-mail/send-mail.module";
 import { SendRoistatModule } from "../send-roistat/send-roistat.module";

@@ -1,15 +1,4 @@
-import {
-    Body,
-    Controller,
-    Get,
-    NotFoundException,
-    Post,
-    Query,
-    Req,
-    Res,
-    StreamableFile,
-    UseGuards
-} from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Post, Query, Res, StreamableFile, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { BaseService } from "../../services/base.service";
 import { SambaService } from "./samba.service";
@@ -99,10 +88,10 @@ export class SystemController extends BaseService{
     }
 
     @ApiOperation({ summary: 'Добавление комментария'})
-    @ApiResponse({ status: 200, description: 'Возвращает true если комментарий вставлен'})
+    @ApiResponse({ status: 200, description: 'Возвращает true если комментарий вставлен', type: CommentDto})
     @Post('addComment')
-    async addComment(@Body() params: AddCommentDto, @Req() req): Promise<boolean> {
-        return await this.systemService.addComment(params, req.user);
+    async addComment(@Body() params: AddCommentDto): Promise<CommentDto | false> {
+        return await this.systemService.addComment(params);
     }
 
     @ApiOperation({ summary: 'Получение данных из таблицы'})

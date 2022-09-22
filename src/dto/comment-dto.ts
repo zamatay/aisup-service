@@ -64,6 +64,14 @@ export class AddCommentDto {
 
     @ApiProperty({
         required: true,
+        type: "integer",
+        description: "Идентификатор пользователя",
+        example: 35
+    })
+    public user_id: number;
+
+    @ApiProperty({
+        required: true,
         type: "string",
         description: "Комментарий",
         example: 'Тестовый комментарий'

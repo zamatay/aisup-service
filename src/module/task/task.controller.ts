@@ -31,8 +31,8 @@ export class TaskController {
     @ApiOperation({ summary: 'Выполнить/снять задачу' })
     @ApiResponse({ status: 200, description: 'Возвращает выполненную/cнятую задачу', type: Task})
     @Post('toggleExecute')
-    async toggleExecute(@Body('task_id') task_id: number, @Req() req): Promise<Task | boolean>{
-        return await this.taskService.toggleExecute(task_id, req.user.id);
+    async toggleExecute(@Body('task_id') task_id: number, @Body('staff_id') staff_id: number, @Req() req): Promise<Task | boolean>{
+        return await this.taskService.toggleExecute(task_id, req.user.id, staff_id);
     }
 
     @ApiOperation({ summary: 'Установить значение прочитанности задаче' })
@@ -59,8 +59,8 @@ export class TaskController {
     @ApiOperation({ summary: 'Установить/снять подтверждение задаче' })
     @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
     @Post('toggleConfirm')
-    async toggleConfirm(@Body('task_id') task_id: number, @Req() req): Promise<Task | boolean>{
-        return await this.taskService.toggleConfirm(task_id, req.user.id);
+    async toggleConfirm(@Body('task_id') task_id: number, @Body('staff_id') staff_id: number, @Req() req): Promise<Task | boolean>{
+        return await this.taskService.toggleConfirm(task_id, req.user.id, staff_id ?? req.user.staff_id);
     }
 
     @ApiOperation({ summary: 'Установить значение активности задаче' })
@@ -73,8 +73,8 @@ export class TaskController {
     @ApiOperation({ summary: 'Установить/снять активность задаче' })
     @ApiResponse({ status: 200, description: 'Возвращает задачу', type: Task})
     @Post('toggleActive')
-    async toggleActive(@Body('task_id') task_id: number, @Req() req): Promise<Task | boolean>{
-        return await this.taskService.toggleActive(task_id, req.user.id);
+    async toggleActive(@Body('task_id') task_id: number, @Body('staff_id') staff_id: number, @Req() req): Promise<Task | boolean>{
+        return await this.taskService.toggleActive(task_id, req.user.id, staff_id);
     }
     @ApiOperation({ summary: 'Получить события по задаче' })
     @ApiResponse({ status: 200, description: 'Возвращает выполненную/cнятую задачу', type: NotifyTask, isArray: true})

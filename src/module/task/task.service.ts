@@ -88,6 +88,20 @@ export class TaskService extends BaseService{
         }
     }
 
+    async setUnRead(task_id: number, staff_id: number) {
+        try {
+                this.manager.createQueryBuilder()
+                    .delete()
+                    .from('DS_Readed')
+                    .where('Personal!=:staff_id and Disposal=:task_id', {task_id, staff_id})
+                    .execute()
+                    .then()
+        } catch (e) {
+            console.log(e.message);
+            return false
+        }
+    }
+
     async toggleRead(task_id: number, staff_id: number, user: User): Promise<TaskValue | false> {
         try {
             return (await this.query('exec ds_toggleRead :user_id, :staff_id, :task_id', { user_id: user.id, staff_id, task_id }))[0];
@@ -97,7 +111,7 @@ export class TaskService extends BaseService{
         }
     }
 
-    async toggleExecute(task_id: number, user_id: number): Promise<Task | false> {
+    async toggleExecute(task_id: number, user_id: number, staff_id: number): Promise<Task | false> {
         try {
             const data = await this.manager.createQueryBuilder()
                 .update("DS_Disposals")
@@ -108,9 +122,10 @@ export class TaskService extends BaseService{
                 })
                 .where("id=:id", { id: task_id })
                 .execute();
-            if (data.affected === 1)
+            if (data.affected === 1) {
+                this.setUnRead(task_id, staff_id).then()
                 return this.getTaskById(task_id);
-            else
+            } else
                 return false;
         } catch (e) {
             console.log(e.message);
@@ -139,7 +154,7 @@ export class TaskService extends BaseService{
         }
     }
 
-    async toggleConfirm(task_id: number, user_id: number): Promise<Task | false> {
+    async toggleConfirm(task_id: number, user_id: number, staff_id: number): Promise<Task | false> {
         try {
             const data = await this.manager.createQueryBuilder()
                 .update("DS_Disposals")
@@ -150,8 +165,10 @@ export class TaskService extends BaseService{
                 })
                 .where("id=:id", { id: task_id })
                 .execute();
-            if (data.affected === 1)
+            if (data.affected === 1) {
+                this.setUnRead(task_id, staff_id).then()
                 return this.getTaskById(task_id);
+            }
             else
                 return false;
         } catch (e) {
@@ -181,7 +198,7 @@ export class TaskService extends BaseService{
         }
     }
 
-    async toggleActive(task_id: number, user_id: number): Promise<Task | false> {
+    async toggleActive(task_id: number, user_id: number, staff_id: number): Promise<Task | false> {
         try {
             const data = await this.manager.createQueryBuilder()
                 .update("DS_Disposals")
@@ -192,9 +209,10 @@ export class TaskService extends BaseService{
                 })
                 .where("id=:id", { id: task_id })
                 .execute();
-            if (data.affected === 1)
+            if (data.affected === 1) {
+                this.setUnRead(task_id, staff_id).then()
                 return this.getTaskById(task_id);
-            else
+            } else
                 return false;
         } catch (e) {
             console.log(e.message);

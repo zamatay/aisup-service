@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { BaseService } from "../../services/base.service";
 import { AddCommentDto, CommentDto } from "../../dto/comment-dto";
-import { User } from "../../dto/User";
 
 @Injectable()
 export class SystemService extends BaseService{
@@ -24,6 +23,7 @@ export class SystemService extends BaseService{
                 .leftJoin("_users", "u", "u.id=n.creator")
                 .leftJoin("ok_staff", "s", "s.id=u.staff_id")
                 .where("n.del = 0 and n.type_id = :object_id and n.object_id=:id", { object_id, id })
+                .orderBy('n.id', "DESC")
                 .execute();
         } catch (e) {
             console.log(e.message);
@@ -31,21 +31,28 @@ export class SystemService extends BaseService{
         }
     }
 
-    async addComment(params: AddCommentDto, user: User): Promise<boolean> {
+    async getCommentById(id: number): Promise<CommentDto | false> {
         try {
-            await this.manager.createQueryBuilder()
-                .insert()
-                .into("_note", ["Creator", "DateCreate", "type_id", "object_id", "note_text"])
-                .values([{
-                    Creator: user.id,
-                    DateCreate: () => "GetDate()",
-                    type_id: params.object_id,
-                    object_id: params.line_id,
-                    note_text: params.text
-                }
-                ])
-                .execute()
-            return true;
+            return await this.manager.createQueryBuilder()
+                .select(["n.id", "type_id as object_id", "n.object_id as line_id", "note_text as text", "s.fio", "n.dateCreate as date"])
+                .from("_Note", "n")
+                .leftJoin("_users", "u", "u.id=n.creator")
+                .leftJoin("ok_staff", "s", "s.id=u.staff_id")
+                .where("n.id=:id", { id })
+                .orderBy('n.id', "DESC")
+                .getRawOne();
+        } catch (e) {
+            console.log(e.message);
+            return false;
+        }
+    }
+
+    async addComment(params: AddCommentDto): Promise<CommentDto | false> {
+        try {
+            const {user_id, object_id, line_id, text} = params;
+            const data = await this.query('exec _AddNote :user_id, :object_id, :line_id, :text', {user_id, object_id, line_id, text})
+            const id = data[0]?.id;
+            return this.getCommentById(id)
         } catch (e) {
             console.log(e.message);
             return false;

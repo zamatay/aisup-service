@@ -1,9 +1,11 @@
-import { Controller, Get, Query } from "@nestjs/common";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { IRegDocumentGroup } from "../reg-doc/dto/document-dto";
+import { Controller, Get, Query, UseGuards } from "@nestjs/common";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { TestService } from "./test.service";
 import { IAnswer, IQueston } from "./dto/test-dto";
+import { JwtAuthGuard } from "../../guards/jwt-auth-guard";
 
+@UseGuards(JwtAuthGuard)
+@ApiTags('Тесты')
 @Controller('api/test')
 export class TestController {
 
