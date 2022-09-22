@@ -8,6 +8,7 @@ import { AuthModule } from "../auth/auth.module";
 @Module({
   controllers: [SystemController],
   providers: [SystemService, SambaService, FileService],
-  imports: [AuthModule]
+  imports: [AuthModule],
+  exports: [SystemService]
 })
 export class SystemModule {}

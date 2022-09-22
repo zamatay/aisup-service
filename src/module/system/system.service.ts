@@ -57,7 +57,6 @@ export class SystemService extends BaseService{
             console.log(e.message);
             return false;
         }
-
     }
 
     async getData(params: any) {

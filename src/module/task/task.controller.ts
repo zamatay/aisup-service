@@ -5,13 +5,16 @@ import { TaskService } from "./task.service";
 import { NotifyTask, Task, TaskRead, TaskStates, TaskValue } from "./dto/task-dto";
 import { IdDto } from "../../dto/id-dto";
 import { IdNameDto } from "../../dto/id-name-dto";
+import { SystemService } from "../system/system.service";
+import { AddCommentDto, CommentDto } from "../../dto/comment-dto";
+import { UserService } from "../../services/user.service";
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Задачи')
 @Controller('api/task')
 export class TaskController {
 
-    constructor(private readonly taskService: TaskService) {
+    constructor(private readonly taskService: TaskService, private  systemService: SystemService, private  userService: UserService) {
     }
 
     @ApiOperation({ summary: 'Получение задач' })
@@ -124,4 +127,24 @@ export class TaskController {
     async getRelatedTask(@Query('staff_id') staff_id: number, @Query('id') task_id: string): Promise<IdDto[] | false>{
         return await this.taskService.getRelatedTask(staff_id, task_id);
     }
+
+    @ApiOperation({ summary: 'Добавление комментария'})
+    @ApiResponse({ status: 200, description: 'Возвращает комментарий если комментарий вставлен или false', type: CommentDto})
+    @Post('addComment')
+    async addComment(@Body() params: AddCommentDto): Promise<CommentDto | false> {
+        try {
+            const { line_id: task_id, user_id } = params;
+            const comment = await this.systemService.addComment(params);
+            if (comment) {
+                const user = await this.userService.getUserById(user_id);
+                const staff_id = user?.staff_id;
+                this.taskService.setUnRead(task_id, staff_id).then();
+            }
+            return comment;
+        } catch (e) {
+            console.log(e);
+            return false
+        }
+    }
+
 }

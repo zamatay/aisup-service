@@ -16,7 +16,8 @@ import { UserService } from "../../services/user.service";
     ],
     exports: [
         AuthService,
-        JwtModule
+        JwtModule,
+        UserService
     ]
 
 })

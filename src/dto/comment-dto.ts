@@ -44,7 +44,6 @@ export class CommentDto {
     public date:      Date;
 }
 
-
 export class AddCommentDto {
     @ApiProperty({
         required: true,
@@ -77,4 +76,30 @@ export class AddCommentDto {
         example: 'Тестовый комментарий'
     })
     public text:      string;
+}
+
+export class AddCommentTaskDto {
+    @ApiProperty({
+        required: true,
+        type: "integer",
+        description: "Идентификатор строки в объекте",
+        example: 186377
+    })
+    public line_id:   number;
+
+    @ApiProperty({
+        required: true,
+        type: "integer",
+        description: "Идентификатор пользователя",
+        example: 35
+    })
+    public user_id: number;
+
+    @ApiProperty({
+        required: true,
+        type: "string",
+        description: "Комментарий",
+        example: 'Тестовый комментарий'
+    })
+    public text: string;
 }

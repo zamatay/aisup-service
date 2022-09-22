@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from "./base.service";
+import { UserDto } from "../dto/user-dto";
+import { User } from "../dto/User";
 
 @Injectable()
 export class UserService extends BaseService{

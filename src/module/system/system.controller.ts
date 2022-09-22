@@ -88,7 +88,7 @@ export class SystemController extends BaseService{
     }
 
     @ApiOperation({ summary: 'Добавление комментария'})
-    @ApiResponse({ status: 200, description: 'Возвращает true если комментарий вставлен', type: CommentDto})
+    @ApiResponse({ status: 200, description: 'Возвращает комментарий если комментарий вставлен или false', type: CommentDto})
     @Post('addComment')
     async addComment(@Body() params: AddCommentDto): Promise<CommentDto | false> {
         return await this.systemService.addComment(params);
