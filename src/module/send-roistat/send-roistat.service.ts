@@ -46,7 +46,6 @@ export class SendRoistatService extends BaseService {
                 public readonly httpClient: HttpService,
                 private schedulerRegistry: SchedulerRegistry) {
         super(props);
-        console.log(roistat.ROISTAT_KEY);
         if (roistat.ROISTAT_KEY) {
             this.project_old_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID_OLD, this.sendFunction);
             this.project_new_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID, this.sendFunction);
