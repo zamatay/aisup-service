@@ -26,4 +26,8 @@ export class AppService extends BaseService {
         }
         throw new NotFoundException();
     }
+
+    async getDBName() {
+        return (await this.query('select DB_NAME() as dbName'))[0];
+    }
 }

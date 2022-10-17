@@ -19,6 +19,11 @@ export class ApiController {
         return this.appService.getVersion()
     }
 
+    @Get('dbName')
+    async getDBName() {
+        return await this.appService.getDBName()
+    }
+
     @ApiOperation({summary: "Процедура получения данных из таблицы"})
     @ApiParam({ name: "tableName", required: true, description: "Название таблицы в системе" })
     @Get('getData')

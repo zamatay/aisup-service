@@ -4,7 +4,6 @@ import { BaseService } from "../../services/base.service";
 import { User } from "../../dto/User";
 import { IdDto } from "../../dto/id-dto";
 import { SelectQueryBuilder } from "typeorm";
-import { AddCommentDto, CommentDto } from "../../dto/comment-dto";
 
 @Injectable()
 export class TaskService extends BaseService{

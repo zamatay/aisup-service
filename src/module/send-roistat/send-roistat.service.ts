@@ -3,12 +3,13 @@ import { BaseService } from "../../services/base.service";
 import { Methods, Roistat } from "./roistat";
 import { roistat } from "../../config/roistat";
 import { TelegramService } from "../../services/telegram.service";
-import { Cron } from "@nestjs/schedule";
+import { SchedulerRegistry } from "@nestjs/schedule";
 import { RoistatNewDto, RoistatOldDto } from "./roistat/dto/roistat-dto";
 import { HttpService } from "@nestjs/axios";
 import { METHOD_POST } from "./roistat/roistat-interface";
 import { Method } from "axios/lib/axios";
 import { AxiosRequestConfig } from "axios";
+import { CronJob } from "cron";
 
 interface IRawDataItem {
     clientStatus_id: number,
@@ -40,10 +41,19 @@ export class SendRoistatService extends BaseService {
         }
     };
 
-    constructor(props, protected telegramService: TelegramService, public readonly httpClient: HttpService) {
+    constructor(props,
+                protected telegramService: TelegramService,
+                public readonly httpClient: HttpService,
+                private schedulerRegistry: SchedulerRegistry) {
         super(props);
-        this.project_old_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID_OLD, this.sendFunction);
-        this.project_new_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID, this.sendFunction);
+        console.log(roistat.ROISTAT_KEY);
+        if (roistat.ROISTAT_KEY) {
+            this.project_old_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID_OLD, this.sendFunction);
+            this.project_new_data = new Roistat(roistat.ROISTAT_KEY, roistat.PROJECT_ID, this.sendFunction);
+
+            const job = new CronJob(`*/${roistat.INTERVAL} * 5-23 * * *`, this.handleCron);
+            this.schedulerRegistry.addCronJob('roistat', job);
+            job.start();        }
     }
 
     async getLastDate(): Promise<Date> {
@@ -99,8 +109,8 @@ export class SendRoistatService extends BaseService {
         }
     }
 
-    @Cron(`*/${roistat.INTERVAL} * 5-23 * * *`, { name: "roistat" })
-    async handleCron(): Promise<void> {
+    //@Cron(`*/${roistat.INTERVAL} * 5-23 * * *`, { name: "roistat" })
+    handleCron = async (): Promise<void> => {
         try {
             const date = new Date();
             const rawData = await this.getData();

@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   nestjs:
@@ -12,4 +12,11 @@ services:
       - "8082:8082"
     environment:
       - NODE_ENV=production
-
+  nestjs_test:
+    image: vkbn
+    container_name: vkbn_test
+    restart: always
+    ports:
+      - "8083:8070"
+    environment:
+      - NODE_ENV=development
